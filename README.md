@@ -1,44 +1,33 @@
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-f059dc9a6f8d3a56e377f745f24479a46679e63a5d9fe6f495e02850cd0d8118.svg)](https://classroom.github.com/online_ide?assignment_repo_id=6731951&assignment_repo_type=AssignmentRepo)
-# COMP0034 Coursework 1 template repository
+# Coursework 1 
 
-The template repository contains a basic structure for coursework 1.
+### Target audience
 
-**Do not** use this to determine what to put in the coursework, you must refer to the coursework specification on
-Moodle.
+As this problem is widespread across Netflix users, our target audience should align closely with that of the platform. According to the Consumer & Media View Survey carried out by Nielsen in 2015, approximately 89% of Netflix users are young adults (aged 18-24), with a large skew aged between 25-39.
 
-## Instructions for using the starter code
+The following user persona exemplifies the target audience further:
 
-To set up your project:
+![Persona Image](comp0034/user_persona.png)
 
-1. Clone this repository in your IDE (e.g. PyCharm, Visual Studio Code) from GitHub. Follow the help in your IDE
-   e.g. [clone a GitHub repo in PyCharm.](https://www.jetbrains.com/help/pycharm/manage-projects-hosted-on-github.html#clone-from-GitHub)
-   or [Cloning a repository in VS Code](https://code.visualstudio.com/docs/editor/github#_cloning-a-repository)
-2. Add a virtual environment (venv). Use the instructions for your IDE
-   or [navigate to your project directory and use python.](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
-3. Install the requirements from requirements.txt. Use the instructions for your IDE
-   or [use python in your shell.](https://pip.pypa.io/en/latest/user_guide/#requirements-files).
-4. Edit .gitignore to add any config files and folders for your IDE. PyCharm, VisualStudio Code, Xcode and NetBeans have
-   already been added.
-5. Copy the prepared data set from COMP0035 coursework to this repository. You may need to use 'git add' to add the file
-   to be tracked by git.
-6. Commit and push the data set to GitHub. This is your first commit for coursework 1. Remember to use source code
-   control throughout the coursework.
-7. `dash_app.py` has been included to allow you to test that your project set up is sufficient to run Dash. Once you are
-   happy that you have set up the project then you should delete the contents of app.py and replace with your coursework
-   code.
-    - To run the dash app from the terminal or shell make sure you are in directory of your repository and type and
-      run `python dash_app.py`
-    - To run the dash app from PyCharm, right click on the file name `dash_app.py` in the Project pane and
-      select `Run dash_app`. Or open `dash_app.py` and click on the green run arrow near line 29.
-    - To run the dash app from VS Code, use the Run option from the left pane.
-8. By default, the dash app should launch on port 8050 of your localhost with the IP
-   address [127.0.0.1:8050](http://127.0.0.1:8050/). Open the URL in a browser. Note: If you get an error like
-   this: `OSError: [Errno 48] Address already in use` then another application is already using the default port (this
-   will also happen if you forget to stop a previous Dash app and try to start another!). You can try another port by
-   modifying the line of code that runs the Dash app to specify a different port number
-   e.g. `app.run_server(debug=True, port=1337)`
 
-## Before you submit the coursework
+### Suggested web app
 
-Remove the instruction text above and complete this README.md using the guidance in the coursework specification.
+To address this problem, I suggest a solution which requests the user input of their movie genre preferences and time they have set aside for watching and returns a list of movies to match. However, if a user is really stumped for choice and has no genre preferences nor time limit, the app will show them a data visualisation highlighting the genres they are most likely to find entertaining and prompt them again for their genre preferences. In response, users can either select one of these genres and be shown a list of movies that match or they can decline to choose (by pressing the "Choose for me" button); in this case, the web-app would make a random selection of movies and visualise their entertainment value.
+
+In line with our target audience's preference for internet streaming, the solution should come in the form of a web-app to maintain the same level of convenience Netflix users are used to in their streaming experience.
+
+To ensure the solution is effective at solving the problem at hand, I suggest focusing on addressing the following data-focused questions. In brackets I also describe the statistical processes that could be used to solve each of these questions, using our data:
+
+
+### Questions to be answered using the dataset
+
+- *What combination of movies is the most entertaining to a user given specific preferences (their preferred genres & the ideal maximum length of marathon)?* - **Recommendation**
+- *Is there a correlation between movie genre and movie popularity? What are the most popular movie genres?* - **Regression**
+- *What are the most popular movies within each genre?* - **Regression**
+- *Which movies fit into the category of the genres they'd like to watch?* - **Classification**
+- *How many movies of this genre can they fit into their allotted marathon time?* - **Summation**
+
+
+## Data preparation and exploration
+### Data preparation
 
