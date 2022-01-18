@@ -7,7 +7,7 @@ As this problem is widespread across Netflix users, our target audience should a
 
 The following user persona exemplifies the target audience further:
 
-![Persona Image](comp0034/user_persona.png)
+![Persona Image](comp0034/comp0034-cw1/user_persona.png)
 
 
 ### Suggested web app
