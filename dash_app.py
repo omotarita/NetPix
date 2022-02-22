@@ -3,38 +3,45 @@
 
 # Run this app with `python dash_app.py` and visit http://127.0.0.1:8050/ in your web browser.
 
-import dash
+import dash, create_charts
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
+from pathlib import Path
 from dash import dcc
 from dash import html
 
 external_stylesheets = [dbc.themes.BOOTSTRAP]
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+#app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SKETCHY])
 
-# assume you have a "long-form" data frame see https://plotly.com/python/px-arguments/ for more options
-df = pd.DataFrame({
-    "Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],
-    "Amount": [4, 1, 2, 2, 4, 5],
-    "City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]
-})
 
-fig = px.bar(df, x="Fruit", y="Amount", color="City", barmode="group")
+DATA_PATH = Path(__file__).parent.joinpath('data')
 
-app.layout = html.Div(children=[
-    html.H1(children='Hello Dash'),
 
-    html.Div(children='''
-        Dash: A web application framework for Python.
-    '''),
+fig_line_sports = create_charts.line_chart_sports()
+fig_chloro_medals = create_charts.choropleth_medal_dist()
 
-    dcc.Graph(
-        id='example-graph',
-        figure=fig
-    )
-])
+app.layout = dbc.Container(
+    [
+        html.H1("NetPix"),
+        html.Br(),
+        html.H3(children=["Here's a list of movies that match your criteria"]),
+
+        dcc.Graph(
+            id='line-sports',
+            figure=fig_line_sports
+        ),
+
+        dcc.Graph(
+            id = 'chloro_medals',
+            figure=fig_chloro_medals
+        )
+    ],
+    fluid=True,
+)
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=8888)
+
