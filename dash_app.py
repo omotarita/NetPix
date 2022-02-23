@@ -20,7 +20,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 DATA_PATH = Path(__file__).parent.joinpath('data')
 
 
-viz_bubble_chart = create_charts.results_bubble()
+viz_bubble_chart = create_charts.results_bubble()[0]
 viz_chloro_medals = create_charts.choropleth_medal_dist()
 
 app.layout = dbc.Container(

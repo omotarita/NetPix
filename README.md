@@ -68,4 +68,14 @@ Both data visualisations, as well as the entire app, will feature styling consis
 
 1. Results (Bubble Chart)
 
+1. *What are the most popular/highest scoring movies that match a user’s given preferences (their preferred genres and/or the maximum length of time they have to spend watching)?*
+2. *How many of these movies can fit into a user’s allotted movie-watching time?*
+3. *Is there a correlation between a movie’s popularity and the vote (or rating) awarded to it by viewers?*
+
+
+
+Not so much of a correlation between popularity and vote - more of a correlation (negative) between popularity and match! The best matches tended to be less popular and the more popular movies tended to match the least. Match and popularity were independent variable, so this was interesting to see
+
+2. Results (Wind Rose)
+
 ... goes a step further by giving the option to deselect (declutter) the chart as users narrow down their decisions
