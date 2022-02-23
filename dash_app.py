@@ -20,8 +20,8 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 DATA_PATH = Path(__file__).parent.joinpath('data')
 
 
-fig_line_sports = create_charts.line_chart_sports()
-fig_chloro_medals = create_charts.choropleth_medal_dist()
+viz_bubble_chart = create_charts.results_bubble()
+viz_chloro_medals = create_charts.choropleth_medal_dist()
 
 app.layout = dbc.Container(
     [
@@ -30,13 +30,13 @@ app.layout = dbc.Container(
         html.H3(children=["Here's a list of movies that match your criteria"]),
 
         dcc.Graph(
-            id='line-sports',
-            figure=fig_line_sports
+            id='bubble-chart',
+            figure=viz_bubble_chart
         ),
 
         dcc.Graph(
             id = 'chloro_medals',
-            figure=fig_chloro_medals
+            figure=viz_chloro_medals
         )
     ],
     fluid=True,
