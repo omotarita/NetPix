@@ -3,13 +3,13 @@
 
 # Run this app with `python dash_app.py` and visit http://127.0.0.1:8050/ in your web browser.
 
+from doctest import OutputChecker
 import dash, create_charts
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
 from pathlib import Path
-from dash import dcc
-from dash import html
+from dash import Dash, dcc, html, Input, Output
 
 external_stylesheets = [dbc.themes.BOOTSTRAP]
 
@@ -21,7 +21,8 @@ DATA_PATH = Path(__file__).parent.joinpath('data')
 
 
 viz_bubble_chart = create_charts.results_bubble()[0]
-viz_chloro_medals = create_charts.choropleth_medal_dist()
+viz_polar_chart = create_charts.comparisons_polar()
+df_User = create_charts.results_bubble()[1]
 
 app.layout = dbc.Container(
     [
@@ -29,18 +30,50 @@ app.layout = dbc.Container(
         html.Br(),
         html.H3(children=["Here's a list of movies that match your criteria"]),
 
-        dcc.Graph(
-            id='bubble-chart',
-            figure=viz_bubble_chart
-        ),
+        dbc.Row([
+            dbc.Col([
+                dcc.Dropdown(
+                    id='dropdown',
+                    options=[df_User['Titles']],
 
-        dcc.Graph(
-            id = 'chloro_medals',
-            figure=viz_chloro_medals
-        )
+                ),
+            ]),
+
+            dbc.Col([
+                dcc.Graph(
+                id='bubble-chart',
+                figure=viz_bubble_chart
+                )
+                
+            
+            ])
+
+        ]),
+
+        dbc.Row([
+            dbc.Col([
+                dcc.Graph(
+                id = 'polar-chart',
+                figure=viz_polar_chart
+                )
+            
+            ])
+
+        ]),
+        
+
+        
     ],
     fluid=True,
 )
+
+@app.callback(
+    Output(component_id='polar-chart', component_property='figure'),
+    Input(component_id='dropdown', component_property='value')
+)
+
+def update_output(input):
+    return
 
 if __name__ == '__main__':
     app.run_server(debug=True, port=8888)

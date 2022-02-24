@@ -1,4 +1,5 @@
 # Helper functions for creating the charts in the activities
+from cmath import nan
 from flask import redirect
 import pandas as pd
 import plotly.express as px
@@ -26,7 +27,7 @@ def user():
     genre_prefs_User = ["Adventure", "Comedy", "Family", "Drama"]
     runtime_prefs_User = 130
 
-    movie_selection = 'The Life Aquatic with Steve Zissou'
+    movie_selection = 'Happy Feet'
 
     genre_adherence = []
     hover_text = []
@@ -70,7 +71,10 @@ def user():
         match.insert(n, math.trunc(match_score))
         genre_adherence.insert(n, (genre_score ** 0.7)/(len(genre_prefs_User) ** 0.7))
         
-        hover_text.insert(n, f"{df_movies['Title'].iloc[n]}{chr(10)}{df_movies['Tagline'].iloc[n]}{newline}{match[n]}% match!{newline}Average Vote:{df_movies['Average Vote (/10)'].iloc[n]}{newline}Popularity:{df_movies['Popularity'].iloc[n]}{newline}Runtime:{df_movies['Runtime (minutes)'].iloc[n]}")
+        if df_movies['Tagline'].iloc[n] == nan:
+            hover_text.insert(n, f"{df_movies['Title'].iloc[n]}{chr(10)}{match[n]}% match!{newline}Average Vote:{df_movies['Average Vote (/10)'].iloc[n]}{newline}Popularity:{df_movies['Popularity'].iloc[n]}{newline}Runtime:{df_movies['Runtime (minutes)'].iloc[n]}")
+        else:
+            hover_text.insert(n, f"{df_movies['Title'].iloc[n]}{chr(10)}{df_movies['Tagline'].iloc[n]}{newline}{match[n]}% match!{newline}Average Vote:{df_movies['Average Vote (/10)'].iloc[n]}{newline}Popularity:{df_movies['Popularity'].iloc[n]}{newline}Runtime:{df_movies['Runtime (minutes)'].iloc[n]}")
 
         n +=1
 
@@ -140,7 +144,7 @@ def results_bubble():
     # Then removing any outliers
     df_User = remove_outliers(df_User)
 
-    print(df_User)
+    #print(df_User)
 
 
     # Adapted from code published in the Plotly documentation (Available from: https://plotly.com/python/bubble-charts/)
@@ -178,18 +182,34 @@ def results_bubble():
     return viz, df_User
 
 
-def choropleth_medal_dist():
-    #How many medals did each country win in the 2012 London Summer Olympics?
+def comparisons_polar():
+    #How many medals did each country win in the 2012 London Summer Olympics? selection_matchp+2
 
     movie_selection = user()[1]
-    df_User = results_bubble()[0]
+    df_User = user()[0]
 
-    selection_index = df_User.index[df_User['Title']==movie_selection
+    #df_User.set_index('TMDB Movie ID', inplace=True)
+    selection_index = df_User.index[df_User['Title']==movie_selection].tolist()[0]
+    selection_matchp = df_User.loc[selection_index,'Percent Match Score']
 
-    comparisons = []
+    df_Similar = df_User[(df_User['Percent Match Score'] > (selection_matchp-5)) & (df_User['Percent Match Score'] < (selection_matchp+5))][0:2]
+
+    df_Optimal = df_User.sort_values(by='Percent Match Score', ascending=False)[0:1]
+
 
     # Movie Selection Popularity Avg Vote Genre Preference Adherence
+    cols = ['Title', 'Popularity', 'Average Vote (/10)', 'Genre Preference Adherence']
+    s1 = [movie_selection, df_User.loc[selection_index,'Popularity'], df_User.loc[selection_index,'Average Vote (/10)']*10, (df_User.loc[selection_index,'Genre Preference Adherence'])*100]
     # Similar Match Popularity Avg Vote GPA
+    s2 = [df_Similar.iloc[0]['Title'], df_Similar.iloc[0]['Popularity'], df_Similar.iloc[0]['Average Vote (/10)']*10, (df_Similar.iloc[0]['Genre Preference Adherence'])*100]
+    s3 = [df_Similar.iloc[1]['Title'], df_Similar.iloc[1]['Popularity'], df_Similar.iloc[1]['Average Vote (/10)']*10, (df_Similar.iloc[1]['Genre Preference Adherence'])*100]
+    s4 = [df_Optimal.iloc[0]['Title'], df_Optimal.iloc[0]['Popularity'], df_Optimal.iloc[0]['Average Vote (/10)']*10, (df_Optimal.iloc[0]['Genre Preference Adherence'])*100]
+    s5 = ['Average', df_User['Popularity'].mean(), df_User['Average Vote (/10)'].mean()*10, (df_User['Genre Preference Adherence'].mean())*100]
+
+    comparisons = [s1, s2, s3, s4, s5]
+    df_Comparisons = pd.DataFrame(comparisons, columns=cols)
+    print(df_Comparisons)
+
     # Similar Match Popularity Avg Vote GPA
     # Better Match POpylarity Avg Vote GPA
     # Better Match POpularity Avg Vote GPA
@@ -199,11 +219,36 @@ def choropleth_medal_dist():
     y=df_User['Average Vote (/10)'],
     color=df_User['Genre Preference Adherence'],
 
-    ]
+    # Adapted from code published in the Plotly documentation (Available from: https://plotly.com/python/wind-rose-charts/) 
+    viz = go.Figure()
 
+    viz.add_trace(go.Barpolar(
+        r=df_Comparisons['Popularity'],
+        name='Popularity',
+        marker_color='#e50914'
+    ))
+    viz.add_trace(go.Barpolar(
+        r=df_Comparisons['Average Vote (/10)'],
+        name='Average Vote (/10)',
+        marker_color='#b20710'
+    ))
+    viz.add_trace(go.Barpolar(
+        r=df_Comparisons['Genre Preference Adherence'],
+        name='Genre Preference Adherence',
+        marker_color='#000000'
+    ))
 
+    viz.update_traces(text=df_Comparisons['Title'])
+    viz.update_layout(
+        title='See how your chosen movie compares to similar options',
+        font_size=16,
+        legend_font_size=16,
+        #polar_radialaxis_ticksuffix='%',
+        polar_angularaxis_rotation=90,
 
+    )
 
+    #remove hover details, remove wind details, remove all numbers tbh
 
  
-    return
+    return viz

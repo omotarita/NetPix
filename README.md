@@ -43,7 +43,9 @@ The questions this visualisation intends to answer are:
 2. *How many of these movies can fit into a user’s allotted movie-watching time?*
 3. *Is there a correlation between a movie’s popularity and the vote (or rating) awarded to it by viewers?*
 
-The advantage of using a bubble chart over other types of data visualisation is its ability to consolidate multiple (up to four) dimensions of data in a visual format, thus facilitating interpretation beyond what is achievable by most other visualisations. Given our target demographic consists of young adults who use streaming platforms and our overarching aim is to reduce “decision fatigue”, it emerges as not only appropriate, but necessary to choose a visualisation which makes it easy for users to compare a large amount of data without having to give it much thought.
+The advantage of using a bubble chart over other types of data visualisation is its ability to consolidate multiple (up to four) dimensions of data in a visual format, thus facilitating interpretation beyond what is achievable by most other visualisations. Given our target demographic consists of young adults who use streaming platforms and our overarching aim is to reduce “decision fatigue”, it emerges as not only appropriate, but necessary to choose a visualisation which makes it easy for users to compare a large amount of data without having to give it much thought. 
+
+Furthermore, given our target audience (young adults) and their purpose for using this visualisation (maximising their entertainment and minimising the time it takes to achieve this), one can assume that they'll be more concerned with quickly observing patterns than crunching numbers. As such, a key aim for both this visualisation and the subsequent one is to communicate the entertainment prospects of each movie as clearly as possible.
 
 ### 2. User Selection Statistics (Wind Rose/Stacked Polar Bar Chart)
 
