@@ -1,16 +1,129 @@
-# Helper functions for creating the charts in the activities
+from doctest import OutputChecker
+import dash, json, math, numpy
+import pandas as pd, plotly.express as px, plotly.graph_objs as go
+import dash_bootstrap_components as dbc
+from pathlib import Path
+from dash import Dash, dcc, html, Input, Output, State
 from cmath import nan
 from flask import redirect
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objs as go
-from pathlib import Path
-import json, math, netpix as netpix
+
+external_stylesheets = [dbc.themes.BOOTSTRAP]
+
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+#app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SKETCHY])
 
 
+DATA_PATH = Path(__file__).parent.joinpath('data')
 MOVIE_DATA_FILEPATH = Path(__file__).parent.joinpath('data', 'updated_complete_data.csv')
+genre_list = ['Action','Adventure','Animation','Comedy','Crime','Documentary','Drama','Family','Fantasy','History','Horror','Music','Mystery','Science-Fiction','Romance','Thriller','TV Movie','War','Western']
 
-def user():
+
+#viz_bubble_chart = results_bubble()[0]
+#viz_polar_chart = comparisons_polar(input)
+
+
+app.layout = dbc.Container(
+    [
+         html.H1("NetPix"),
+        html.Br(),
+        html.H2(children=["Helping you pick the best flicks"]),
+        html.Br(),
+        html.Br(),
+        html.H3(children=["What are your preferences?"]),
+
+        html.Br(),
+        html.Br(),
+
+        dbc.Row([
+
+            dcc.Dropdown(
+                    id='genre-dropdown',
+                    options=[{'label': x, 'value': x} for x in genre_list],
+                    placeholder='Select your preferred genres (we recommend picking at least 3)',
+                    multi=True
+
+                    ),
+
+        ]),
+
+        html.Br(),
+        html.Br(),
+
+        dbc.Row([
+            
+
+            dcc.Slider(min=0, max=360, step=5,
+                value=150,
+                tooltip={"placement": "bottom", "always_visible": True}, 
+                id='runtime-slider'
+                ),
+
+            html.Div(id='slider-output-container')
+
+        ]),
+
+        html.H3(children=["Here's a list of movies that match your preferences"]),
+
+
+        dbc.Row([
+            dbc.Col(width=4, children=[
+                dcc.Dropdown(
+                    id='movie-dropdown',
+                    #doesn't look like dropdown is showing all the options/nor even the right options. change df_User to df from results_bubble and check again
+                    options={},
+                    #options=[{'label': x, 'value': x} for x in {}],
+                    value='Happy Feet',
+                    placeholder='Pick a movie'
+
+                ),
+                
+            ]),
+
+            dbc.Col(width=8, children=[
+                dcc.Graph(
+                id='bubble-chart',
+                figure={}
+                )
+                
+            
+            ])
+
+        ]),
+
+        dbc.Row([
+
+            dbc.Col([
+                html.Div(id='description-box', style={'text-align': 'center'}, children=[
+                    html.H2(id='header', children={}),
+                    html.A(id='text', children={}),
+                    html.Br(),
+                    html.Br(),
+                    html.Img(id='poster', width=500, src="https://cdn.vox-cdn.com/thumbor/Yq1Vd39jCBGpTUKHUhEx5FfxvmM=/39x0:3111x2048/1200x800/filters:focal(39x0:3111x2048)/cdn.vox-cdn.com/uploads/chorus_image/image/49901753/netflixlogo.0.0.png")
+
+                ])
+            ]),
+
+            dbc.Col([
+                dcc.Graph(
+                id = 'polar-chart',
+                figure={}
+                )
+            
+            ])
+
+        ]),
+        
+
+        
+    ],
+    fluid=True,
+)
+
+@app.callback(
+    [Output('slider-output-container', 'children'), Output('bubble-chart', 'figure'), Output('movie-dropdown', 'options')],
+    [Input('runtime-slider', 'value'), Input('genre-dropdown', 'value')]
+)
+def update_user(time_value, genre_value):
     """
     Takes input from user's preferences and adapts the dataset accordingly to show user's results
 
@@ -22,10 +135,27 @@ def user():
     df_movies = pd.read_csv(MOVIE_DATA_FILEPATH)
 
     #These lines of code should be made interactive
-    genre_prefs_User = ["Adventure", "Comedy", "Family", "Drama"]
-    runtime_prefs_User = 130
+    #genre_prefs_User = ["Adventure", "Comedy", "Family", "Drama"]
+    genre_prefs_User = genre_value
 
-    movie_selection = 'Happy Feet'
+    hours = time_value//60
+    minutes= time_value - (hours*60)
+
+    if hours == 0:
+        if minutes == 1:
+            time = f"Max: {minutes} minute"
+        else:
+            time = f"Max: {minutes} minutes"
+    elif hours == 1:
+        if minutes ==1:
+            time = f"Max: {hours} hour and {minutes} minute"
+        else:
+            time = f"Max: {hours} hour and {minutes} minutes"
+    else:
+        if minutes == 1:
+            time = f"Max: {hours} hours and {minutes} minute"
+        else:
+            time = f"Max: {hours} hours and {minutes} minutes"
 
     genre_adherence = []
     hover_text = []
@@ -77,17 +207,33 @@ def user():
         n +=1
 
     df_movies['Genre Preference Adherence'] = genre_adherence
-    #adherence_col = df_movies['Genre Preference Adherence']
     df_movies['Hover Description'] = hover_text
-    #hover_col = df_movies['Hover Description']
     df_movies['Percent Match Score'] = match
-    #print(len(match))
-    #match_col = 
+  
+    df_User = df_movies[(df_movies['Runtime (minutes)'] < time_value) & (df_movies['Popularity'] > 3) & (df_movies['Percent Match Score'] > 55)]
+    df_User = df_User.sample(frac = 1)[0:int(0.2*len(df_User))]
+    #df_User = df_User[0:int(0.2*len(df_User))]
+    df_User = remove_outliers(df_User)
 
+    viz = results_bubble(df_User)[0]
+
+    movie_options = df_User['Title']
+    movie_options.tolist()
     
-    df_User = df_movies[(df_movies['Runtime (minutes)'] < runtime_prefs_User) & (df_movies['Popularity'] > 3)]
-    
-    return df_User, movie_selection
+    return time, viz, movie_options
+
+@app.callback(
+    [Output('polar-chart', 'figure'), Output('header', 'children'), Output('text', 'children'), Output('poster', 'src')],
+    Input('movie-dropdown', 'value')
+)
+def update_selection(input):
+    viz = comparisons_polar(input)[0]
+    title = movie_box(input)[0]
+    overview = movie_box(input)[1]
+    poster = str(movie_box(input)[2])
+    return viz, title, overview, poster
+
+
 
 def remove_outliers(df):
     '''
@@ -104,18 +250,12 @@ def remove_outliers(df):
     maxVote = meanAvgVote+(1.5*stdAvgVote)
     minVote = meanAvgVote-(1.5*stdAvgVote)
 
-
-    #remove certain values from dataframe
     df = df[(df['Average Vote (/10)'] > minVote) & (df['Average Vote (/10)'] < maxVote)]
     df = df[(df['Popularity'] > minPop) & (df['Popularity'] < maxPop)]
 
-
-    #remove rows with empty 
-    #df = df.dropna(axis=0, how='any')
-
     return df
 
-def results_bubble():
+def results_bubble(df_User):
     """
     Takes the movie dataset prepared in COMP0035 and creates a bubble chart by using the Plotly Graph Objects Scatter function and making the 
     marker size variable
@@ -125,30 +265,8 @@ def results_bubble():
     :return: None
     """
 
-    df_User = user()[0]
-    
-    #genre_colors = {'Action': ,'Adventure': ,'Animation': ,'Comedy': ,'Crime': ,'Documentary': ,'Drama': ,'Family': , 'Fantasy': ,'History': ,'Horror': ,'Music': ,'Mystery': ,'Science-Fiction': ,'Romance': ,'Thriller': ,'TV Movie': ,'War': ,'Western': }
-
-    # Considering only the top 25% of matches
-    #df_User = df_User.sort_values(by='Percent Match Score', ascending=False)
-    df_User = df_User[df_User['Percent Match Score'] > 55]
-
-    df_User = df_User.sample(frac = 1)
-    df_User = df_User[0:int(0.2*len(df_User))]
-
-    #df_User = df_User.sort_values(by='Genre Preference Adherence', ascending=False)
-    #df_User[~df_User['Genre Preference Adherence'] < 1]
-
-    # Then removing any outliers
-    df_User = remove_outliers(df_User)
-
-    #print(df_User)
-
-
     # Adapted from code published in the Plotly documentation (Available from: https://plotly.com/python/bubble-charts/)
-
     size = 3.5 ** (df_User['Percent Match Score']/10)
-    #text = df_User['Title'], df_User['Tagline'], df_User['Average Vote (/10)'], df_User['Popularity'], df_User['Runtime (minutes)']
 
     viz = go.Figure(data=[go.Scatter(
                           x=df_User['Popularity'],
@@ -156,12 +274,6 @@ def results_bubble():
                           mode='markers',
                           hovertext=df_User['Hover Description'],
                           hoverinfo= 'text',
-                          
-                          #labels={'Average Vote (/10)': 'Average Vote (/10)', 'Popularity': 'Popularity'},
-
-                          #hover_name=df_User['Title'],
-                          #hover_data=["Title", "Tagline", "Average Vote (/10)", "Popularity", "Runtime (minutes)"],
-                          #template="simple_white",
 
                           marker=dict(
                             size=size,
@@ -179,28 +291,26 @@ def results_bubble():
 
     return viz, df_User
 
-
-def setup_comparisons_polar():
-    #How many medals did each country win in the 2012 London Summer Olympics? selection_matchp+2
-
+def comparisons_polar(selection):
     #movie_selection = user()[1]
-    movie_selection = netpix.update_selection()
+    #movie_selection = selection
 
-    df_User = user()[0]
+    df_User = update_user()[2]
 
-    #df_User.set_index('TMDB Movie ID', inplace=True)
-    selection_index = df_User.index[df_User['Title']==movie_selection].tolist()[0]
+    selection_index = df_User.index[df_User['Title']==selection].tolist()[0]
     selection_matchp = df_User.loc[selection_index,'Percent Match Score']
 
-    df_Similar = df_User[(df_User['Percent Match Score'] > (selection_matchp-5)) & (df_User['Percent Match Score'] < (selection_matchp+5))][0:2]
-
+    #df_Similar = df_User[(df_User['Percent Match Score'] > (selection_matchp-3)) & (df_User['Percent Match Score'] < (selection_matchp+3))][0:2]
+    #df_Similar should be gotten from results_bubble but using the genres of the selection as the input  
+    df_Similar = df_User[(df_User['Percent Match Score'] > (selection_matchp-3)) & (df_User['Percent Match Score'] < (selection_matchp+3))].sample(frac = 1)
+    df_Similar = df_Similar[0:2]
     df_Optimal = df_User.sort_values(by='Percent Match Score', ascending=False)[0:1]
+    #df_Optimal = df_User.sort_values(by='Percent Match Score', ascending=False).sample(frac = 1)
+    #df_Optimal = df_Optimal[0:1]
 
 
-    # Movie Selection Popularity Avg Vote Genre Preference Adherence
     cols = ['Title', 'Popularity', 'Average Vote (/10)', 'Genre Preference Adherence']
-    s1 = [movie_selection, df_User.loc[selection_index,'Popularity'], df_User.loc[selection_index,'Average Vote (/10)']*10, (df_User.loc[selection_index,'Genre Preference Adherence'])*100]
-    # Similar Match Popularity Avg Vote GPA
+    s1 = [selection, df_User.loc[selection_index,'Popularity'], df_User.loc[selection_index,'Average Vote (/10)']*10, (df_User.loc[selection_index,'Genre Preference Adherence'])*100]
     s2 = [df_Similar.iloc[0]['Title'], df_Similar.iloc[0]['Popularity'], df_Similar.iloc[0]['Average Vote (/10)']*10, (df_Similar.iloc[0]['Genre Preference Adherence'])*100]
     s3 = [df_Similar.iloc[1]['Title'], df_Similar.iloc[1]['Popularity'], df_Similar.iloc[1]['Average Vote (/10)']*10, (df_Similar.iloc[1]['Genre Preference Adherence'])*100]
     s4 = [df_Optimal.iloc[0]['Title'], df_Optimal.iloc[0]['Popularity'], df_Optimal.iloc[0]['Average Vote (/10)']*10, (df_Optimal.iloc[0]['Genre Preference Adherence'])*100]
@@ -208,16 +318,6 @@ def setup_comparisons_polar():
 
     comparisons = [s1, s2, s3, s4, s5]
     df_Comparisons = pd.DataFrame(comparisons, columns=cols)
-    print(df_Comparisons)
-
-    # Similar Match Popularity Avg Vote GPA
-    # Better Match POpylarity Avg Vote GPA
-    # Better Match POpularity Avg Vote GPA
-    # Avg AvgPopularity Avg(Avg Vote) AvgGPA
-
-    x=df_User['Popularity'],
-    y=df_User['Average Vote (/10)'],
-    color=df_User['Genre Preference Adherence'],
 
     # Adapted from code published in the Plotly documentation (Available from: https://plotly.com/python/wind-rose-charts/) 
     viz = go.Figure()
@@ -250,6 +350,19 @@ def setup_comparisons_polar():
 
     #remove hover details, remove wind details, remove all numbers tbh
 
- 
-    return viz
+    return viz, selection_index
+
+def movie_box(selection):
+    title = selection
+    selection_index = df_User.index[df_User['Title']==selection].tolist()[0]
+    overview = df_User.loc[selection_index,'Overview']
+    poster_link = f"https://image.tmdb.org/t/p/w500{df_User.loc[selection_index,'Poster Path']}"
+
+    print(poster_link)
+
+    return title, overview, poster_link
+
+
+if __name__ == '__main__':
+    app.run_server(debug=True, port=8888)
 
