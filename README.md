@@ -81,3 +81,11 @@ Not so much of a correlation between popularity and vote - more of a correlation
 2. Results (Wind Rose)
 
 ... goes a step further by giving the option to deselect (declutter) the chart as users narrow down their decisions
+
+
+## Bibliography
+
+Netflix. (2022). *How to rate TV shows and movies* [online]. Available from: [Netflix Help Center](https://help.netflix.com/en/node/9898). [accessed 15 Feb 2022]
+
+Chen, L. (2019). *Learning about Media Users from Movie Rating Data* [online]. Available from: [DSpace@MIT](https://dspace.mit.edu/bitstream/handle/1721.1/129200/1227275102-MIT.pdf?sequence=1&isAllowed=y). [accessed 16 Feb 2022]
+

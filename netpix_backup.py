@@ -39,8 +39,14 @@ app.layout = html.Div(style={'background-color': '#141414'}, children=[
                 ])
                 
             ]),
-     
+
+            
+            
             html.Br(),
+            dbc.Row([
+                
+
+            ]),
             
             html.Br(),
             html.Br(),
@@ -85,7 +91,7 @@ app.layout = html.Div(style={'background-color': '#141414'}, children=[
 
 
             html.H3(children=["Here's a list of movies that match your preferences"]),
-
+            html.Br(),
 
             dbc.Row([
                 dbc.Col(width=4, children=[
@@ -105,7 +111,7 @@ app.layout = html.Div(style={'background-color': '#141414'}, children=[
                         html.A(id='text', style={'font-size': '18px'}, children={}),
                         html.Br(),
                         html.Br(),
-                        html.Img(id='poster', width=450, src="https://cdn.vox-cdn.com/thumbor/Yq1Vd39jCBGpTUKHUhEx5FfxvmM=/39x0:3111x2048/1200x800/filters:focal(39x0:3111x2048)/cdn.vox-cdn.com/uploads/chorus_image/image/49901753/netflixlogo.0.0.png")
+                        html.Img(id='poster', width=450, src="https://www.colorhexa.com/141414.png")
 
                     ])    
                     
@@ -116,26 +122,20 @@ app.layout = html.Div(style={'background-color': '#141414'}, children=[
                         dcc.Graph(
                             id='bubble-chart',
                             figure={}
-                        ),
-
+                        )
+                    
                     ]),
-
-                    html.Div,
-
+                    html.Br(),
+                    html.Br(),
                     dbc.Row([
-                        dbc.Col([
-                            dcc.Graph(
+                        dcc.Graph(
                             id = 'polar-chart',
                             figure={}
                         )
-                    
                     ])
                 
                 ])
 
-            ]),
-
-            
             ]),
 
         
@@ -329,8 +329,8 @@ def results_bubble(df):
                             sizeref=2.*(max(size)/2)/(60.**2),
                             sizemin = 10,
                             color=df['Genre Preference Adherence'],
-                            colorscale=[(0,"#e50914"), (1,"#b20710")],
-                            #opacity=0.5,
+                            colorscale=[(0,"#e50914"), (1,"#430206")],
+                            opacity=1,
                             line=dict(width=2,
                                         color='antiquewhite')                            
                             
@@ -338,7 +338,9 @@ def results_bubble(df):
     )])
 
     viz.update_layout(
-        template = 'plotly_dark'
+        template = 'plotly_dark',
+        paper_bgcolor='#141414',
+        plot_bgcolor='#141414'
     )
 
     return viz 
@@ -383,12 +385,14 @@ def comparisons_polar(selection, df):
     viz.add_trace(go.Barpolar(
         r=df_Comparisons['Genre Preference Adherence'],
         name='Genre Preference Adherence',
-        marker_color='#000000'
+        marker_color='#550307'
     ))
     viz.update_traces(text=df_Comparisons['Title'])
     viz.update_layout(
         template = 'plotly_dark',
-        title='See how your chosen movie compares to similar options',
+        paper_bgcolor='#141414',
+        plot_bgcolor='#141414',
+        title="This is how your current selection compares to some other options",
         font_size=16,
         legend_font_size=16,
         polar_angularaxis_rotation=90,
@@ -413,5 +417,5 @@ def movie_box(selection, df):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8888)
+    app.run_server(debug=False, port=8888)
 
