@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
 from pathlib import Path
-import json, math, netpix as netpix
+import json, math, pages.netpix as netpix
 
 
 MOVIE_DATA_FILEPATH = Path(__file__).parent.joinpath('data', 'updated_complete_data.csv')

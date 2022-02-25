@@ -9,7 +9,7 @@ The app is intended for use in tandem with Netflix, although we intend to expand
 
 The following user persona exemplifies the target audience and potential use cases of NetPicks:
 
-![Persona Image](images/user_persona.png)
+![Persona Image](assets/images/user_persona.png)
 
 To address the “decision fatigue” issues widely posed by streaming platforms, NetPicks will act as a recommender engine which takes the input of a user’s genre preferences and the maximum amount of time they have to spend watching Netflix and returns a couple of visualisations on the viewing stats for different movies that match these. 
 
@@ -29,7 +29,7 @@ For the app to achieve its intended purposes as described, the visualisations cr
 
 Upon confirming their preferences, users will be navigated to a screen displaying a list of movies that correspond to these and a data visualisation providing further insight into the statistics for each of these movies (namely their popularity, the average vote awarded to them by viewers and their adherence to the user’s genre preferences). This visualisation aims to support users in making an informed decision on what movie (or combination of movies) to watch and which ones not to watch.
 
-![Untitled](images/example_bubble.png)
+![Untitled](assets/images/example_bubble.png)
 
 I suggest displaying this information in a bubble chart (similar to the one shown above) but instead with the x-axis corresponding to the movie’s average score, the y-axis corresponding to the movie’s popularity and the bubble size corresponding to genre preference adherence (a standardised score relating to how closely the movie’s genres match the user’s genre preferences). The bubbles themselves won’t display any directly identifying characteristics of the movies aside from the number corresponding to its position in the list of results, so as not to overwhelm the visualisation. However, upon hovering over each bubble, more information will be displayed, such as the movie’s title, its cover image, tagline and specific statistics. 
 
@@ -51,7 +51,7 @@ Furthermore, given our target audience (young adults) and their purpose for usin
 
 Finally, on confirming their selection of movie/s, users are navigated to a page displaying the same movie information shown upon hovering over the bubble chart, such as the title/s and cover image/s and, additionally, a brief description of the/each movie and a data visualisation providing a clearer gauge on how their selection compares to other options. The purpose of this visualisation is to guide users’ decision-making further, by showing a more “zoomed-in” view of the data for a small number of movies/movie combinations, whilst highlighting the user’s selected movie/s to support comparison across these options and, subsequently, facilitate the validation of their final, confirmed choice.
 
-![Untitled](images/example_polar.png)
+![Untitled](assets/images/example_polar.png)
 
 I suggest visualising this as a stacked polar bar chart (similar to the one shown above),  featuring a clearly highlighted bar corresponding to the user’s selection/s, a bar corresponding to the data average for all the movies matching the user’s preferences and the remaining bars corresponding to up to three alternative recommended movies (or sets of movies) matching the user’s preferences. The stacked segments should correspond to the movies’ popularity, average vote awarded and genre-adherence and each of these parameters can be deselected to remove them from being viewed in the visualisation. 
 

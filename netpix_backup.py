@@ -7,7 +7,7 @@ from dash import Dash, dcc, html, Input, Output, State
 from cmath import nan
 from flask import redirect
 
-external_stylesheets = [dbc.themes.BOOTSTRAP]
+external_stylesheets = ['https://fonts.googleapis.com/css?family=Bebas%20Neue&display=swap', dbc.themes.BOOTSTRAP]
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 #app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SKETCHY])
@@ -24,109 +24,122 @@ df_movies = pd.read_csv(MOVIE_DATA_FILEPATH)
 #viz_polar_chart = comparisons_polar(input)
 
 
-app.layout = dbc.Container(
-    [
-        dcc.Store(id='hidden-store', storage_type='memory'),
-        html.Div(id='some-store'),
-        html.H1("NetPix"),
-        html.Br(),
-        html.H2(children=["Helping you pick the best flicks"]),
-        html.Br(),
-        html.Br(),
-        html.H3(children=["What are your preferences?"]),
+app.layout = html.Div(style={'background-color': '#141414'}, children=[
 
-        html.Br(),
-        html.Br(),
+    dbc.Container([
+            dcc.Store(id='hidden-store', storage_type='memory'),
+            html.Div(id='some-store'),
+            dbc.Row([
+                html.H1("NetPix", style={'color': '#FFFFFF', 'font-family': 'Bebas Neue'})
+            ]),
+            
+            html.Br(),
+            dbc.Row([
+                html.H2(children=["Helping you pick the best flicks"], style={'color': '#FFFFFF'}),
 
-        dbc.Row([
+            ]),
+            
+            html.Br(),
+            html.Br(),
+            dbc.Row([
+                html.H3(children=["What are your preferences?"], style={'color': '#FFFFFF', 'font-family': 'Helvetica Neue'}),
 
-            dcc.Dropdown(
-                    id='genre-dropdown',
-                    options=[{'label': x, 'value': x} for x in genre_list],
-                    placeholder='Select your preferred genres (we recommend picking at least 3)',
-                    multi=True
+            ]),
+            
 
+            html.Br(),
+            html.Br(),
+
+            dbc.Row([
+
+                dcc.Dropdown(
+                        id='genre-dropdown',
+                        options=[{'label': x, 'value': x} for x in genre_list],
+                        placeholder='Select your preferred genres (we recommend picking at least 3)',
+                        multi=True
+
+                        ),
+
+            ]),
+
+            html.Br(),
+            html.Br(),
+
+            dbc.Row([
+                
+
+                dcc.Slider(min=0, max=360, step=5,
+                    value=150,
+                    tooltip={"placement": "bottom", "always_visible": True}, 
+                    id='runtime-slider'
                     ),
 
-        ]),
+                html.Div(id='slider-output-container')
 
-        html.Br(),
-        html.Br(),
-
-        dbc.Row([
-            
-
-            dcc.Slider(min=0, max=360, step=5,
-                value=150,
-                tooltip={"placement": "bottom", "always_visible": True}, 
-                id='runtime-slider'
-                ),
-
-            html.Div(id='slider-output-container')
-
-        ]),
-
-        html.Br(),
-        html.Br(),
-
-
-        html.H3(children=["Here's a list of movies that match your preferences"]),
-
-
-        dbc.Row([
-            dbc.Col(width=4, children=[
-                dcc.Dropdown(
-                    id='movie-dropdown',
-                    #doesn't look like dropdown is showing all the options/nor even the right options. change df_User to df from results_bubble and check again
-                    #options=[],
-                    #options=[{'label':i,'value': i} for i in {}],
-                    #options=[{'label': i,'value': i} for i in df_movies['Title'].tolist()],
-                    #value='Happy Feet',
-                    placeholder='Pick a movie'
-
-                ),
-                
             ]),
 
-            dbc.Col(width=8, children=[
-                dcc.Graph(
-                id='bubble-chart',
-                figure={}
-                )
+            html.Br(),
+            html.Br(),
+
+
+            html.H3(children=["Here's a list of movies that match your preferences"]),
+
+
+            dbc.Row([
+                dbc.Col(width=4, children=[
+                    dcc.Dropdown(
+                        id='movie-dropdown',
+                        #doesn't look like dropdown is showing all the options/nor even the right options. change df_User to df from results_bubble and check again
+                        #options=[],
+                        #options=[{'label':i,'value': i} for i in {}],
+                        #options=[{'label': i,'value': i} for i in df_movies['Title'].tolist()],
+                        #value='Happy Feet',
+                        placeholder='Pick a movie'
+
+                    ),
+                    
+                ]),
+
+                dbc.Col(width=8, children=[
+                    dcc.Graph(
+                    id='bubble-chart',
+                    figure={}
+                    )
+                    
                 
-            
-            ])
-
-        ]),
-
-        dbc.Row([
-
-            dbc.Col([
-                html.Div(id='description-box', style={'text-align': 'center'}, children=[
-                    html.H2(id='header', children={}),
-                    html.A(id='text', children={}),
-                    html.Br(),
-                    html.Br(),
-                    html.Img(id='poster', width=500, src="https://cdn.vox-cdn.com/thumbor/Yq1Vd39jCBGpTUKHUhEx5FfxvmM=/39x0:3111x2048/1200x800/filters:focal(39x0:3111x2048)/cdn.vox-cdn.com/uploads/chorus_image/image/49901753/netflixlogo.0.0.png")
-
                 ])
+
             ]),
 
-            dbc.Col([
-                dcc.Graph(
-                id = 'polar-chart',
-                figure={}
-                )
-            
-            ])
+            dbc.Row([
 
-        ]),
-        
+                dbc.Col([
+                    html.Div(id='description-box', style={'text-align': 'center'}, children=[
+                        html.H2(id='header', children={}),
+                        html.A(id='text', children={}),
+                        html.Br(),
+                        html.Br(),
+                        html.Img(id='poster', width=500, src="https://cdn.vox-cdn.com/thumbor/Yq1Vd39jCBGpTUKHUhEx5FfxvmM=/39x0:3111x2048/1200x800/filters:focal(39x0:3111x2048)/cdn.vox-cdn.com/uploads/chorus_image/image/49901753/netflixlogo.0.0.png")
+
+                    ])
+                ]),
+
+                dbc.Col([
+                    dcc.Graph(
+                    id = 'polar-chart',
+                    figure={}
+                    )
+                
+                ])
+
+            ]),
 
         
-    ],
+        ],
     fluid=True,
-)
+    ),
+
+])
 
 @app.callback(
     [Output('hidden-store', 'hidden'), Output('slider-output-container', 'children'), Output('bubble-chart', 'figure'), Output('movie-dropdown', 'options')],
@@ -272,15 +285,15 @@ def remove_outliers(df):
     :return: DataFrame
     '''
 
-    stdPopularity = df['Popularity'].std()
+    sdevPopularity = df['Popularity'].std()
     meanPopularity = df['Popularity'].mean()
-    stdAvgVote = df['Average Vote (/10)'].std()
-    meanAvgVote = df['Average Vote (/10)'].mean()
+    sdevVote = df['Average Vote (/10)'].std()
+    meanVote = df['Average Vote (/10)'].mean()
 
-    maxPop = meanPopularity+(1.5*stdPopularity)
-    minPop = meanPopularity-(1.5*stdPopularity)
-    maxVote = meanAvgVote+(1.5*stdAvgVote)
-    minVote = meanAvgVote-(1.5*stdAvgVote)
+    maxPop = meanPopularity+(1.5*sdevPopularity)
+    minPop = meanPopularity-(1.5*sdevPopularity)
+    maxVote = meanVote+(1.5*sdevVote)
+    minVote = meanVote-(1.5*sdevVote)
 
     df = df[(df['Average Vote (/10)'] > minVote) & (df['Average Vote (/10)'] < maxVote)]
     df = df[(df['Popularity'] > minPop) & (df['Popularity'] < maxPop)]
