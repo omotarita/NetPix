@@ -1,6 +1,6 @@
 from doctest import OutputChecker
-import dash, json, math, numpy
-import pandas as pd, plotly.express as px, plotly.graph_objs as go, dash_bootstrap_components as dbc
+import dash, math
+import pandas as pd, plotly.graph_objs as go, dash_bootstrap_components as dbc
 from pathlib import Path
 from dash import Dash, dcc, html, Input, Output, State
 from cmath import nan
@@ -382,7 +382,7 @@ def movie_box(selection, df):
     match_score = df.loc[selection_index,'Percent Match Score']
     overview = df.loc[selection_index,'Overview']
     poster_link = f"https://image.tmdb.org/t/p/w500{df.loc[selection_index,'Poster Path']}"
-    
+
     return title, match_score, overview, poster_link
 
 
