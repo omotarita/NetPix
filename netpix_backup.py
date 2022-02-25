@@ -7,7 +7,7 @@ from dash import Dash, dcc, html, Input, Output, State
 from cmath import nan
 from flask import redirect
 
-external_stylesheets = ['https://fonts.googleapis.com/css?family=Bebas%20Neue&display=swap', dbc.themes.BOOTSTRAP]
+external_stylesheets = ['assets/custom.css', dbc.themes.BOOTSTRAP]
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 #app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SKETCHY])
@@ -24,30 +24,32 @@ df_movies = pd.read_csv(MOVIE_DATA_FILEPATH)
 #viz_polar_chart = comparisons_polar(input)
 
 
+
 app.layout = html.Div(style={'background-color': '#141414'}, children=[
 
     dbc.Container([
             dcc.Store(id='hidden-store', storage_type='memory'),
-            html.Div(id='some-store'),
+            #html.Div(id='some-store'),
             dbc.Row([
-                html.H1("NetPix", style={'color': '#FFFFFF', 'font-family': 'Bebas Neue'})
+                html.Div(style={'text-align': 'center'}, children=[
+                    html.Br(),
+                    #html.H1("N E T P I X", style={'color': '#E50914', 'text-align': 'center'}),
+                    html.Img(id='logo', width=300, src="assets/images/logo.png"),
+                    #html.H2(children=["Helping you pick the best flicks"], style={'color': '#FFFFFF', 'font-size': '30px'}),
+                ])
+                
             ]),
+     
+            html.Br(),
             
             html.Br(),
-            dbc.Row([
-                html.H2(children=["Helping you pick the best flicks"], style={'color': '#FFFFFF'}),
-
-            ]),
-            
-            html.Br(),
             html.Br(),
             dbc.Row([
-                html.H3(children=["What are your preferences?"], style={'color': '#FFFFFF', 'font-family': 'Helvetica Neue'}),
+                html.Div(style={'text-align': 'center'}, children=[
+                    html.H3(children=["What are your preferences?"], style={'color': '#FFFFFF', 'font-family': 'Helvetica Neue', 'font-size': '26px' , 'opacity': '0.7'}),
+                ])
 
             ]),
-            
-
-            html.Br(),
             html.Br(),
 
             dbc.Row([
@@ -97,41 +99,43 @@ app.layout = html.Div(style={'background-color': '#141414'}, children=[
                         placeholder='Pick a movie'
 
                     ),
+                html.Div(id='description-box', style={'text-align': 'center'}, children=[
+                        html.Br(),
+                        html.H2(id='header', children={}),
+                        html.A(id='text', style={'font-size': '18px'}, children={}),
+                        html.Br(),
+                        html.Br(),
+                        html.Img(id='poster', width=450, src="https://cdn.vox-cdn.com/thumbor/Yq1Vd39jCBGpTUKHUhEx5FfxvmM=/39x0:3111x2048/1200x800/filters:focal(39x0:3111x2048)/cdn.vox-cdn.com/uploads/chorus_image/image/49901753/netflixlogo.0.0.png")
+
+                    ])    
                     
                 ]),
 
                 dbc.Col(width=8, children=[
-                    dcc.Graph(
-                    id='bubble-chart',
-                    figure={}
-                    )
+                    dbc.Row([
+                        dcc.Graph(
+                            id='bubble-chart',
+                            figure={}
+                        ),
+
+                    ]),
+
+                    html.Div,
+
+                    dbc.Row([
+                        dbc.Col([
+                            dcc.Graph(
+                            id = 'polar-chart',
+                            figure={}
+                        )
                     
+                    ])
                 
                 ])
 
             ]),
 
-            dbc.Row([
-
-                dbc.Col([
-                    html.Div(id='description-box', style={'text-align': 'center'}, children=[
-                        html.H2(id='header', children={}),
-                        html.A(id='text', children={}),
-                        html.Br(),
-                        html.Br(),
-                        html.Img(id='poster', width=500, src="https://cdn.vox-cdn.com/thumbor/Yq1Vd39jCBGpTUKHUhEx5FfxvmM=/39x0:3111x2048/1200x800/filters:focal(39x0:3111x2048)/cdn.vox-cdn.com/uploads/chorus_image/image/49901753/netflixlogo.0.0.png")
-
-                    ])
-                ]),
-
-                dbc.Col([
-                    dcc.Graph(
-                    id = 'polar-chart',
-                    figure={}
-                    )
-                
-                ])
-
+            
             ]),
 
         
@@ -332,6 +336,11 @@ def results_bubble(df):
                             
                           ) #add axis labels
     )])
+
+    viz.update_layout(
+        template = 'plotly_dark'
+    )
+
     return viz 
 
 def comparisons_polar(selection, df):
@@ -378,6 +387,7 @@ def comparisons_polar(selection, df):
     ))
     viz.update_traces(text=df_Comparisons['Title'])
     viz.update_layout(
+        template = 'plotly_dark',
         title='See how your chosen movie compares to similar options',
         font_size=16,
         legend_font_size=16,

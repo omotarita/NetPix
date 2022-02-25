@@ -1,0 +1,88 @@
+@font-face {
+    font-family: 'Bebas Neue'; 
+    src: url('assets/fonts/BebasNeue.ttf') format("opentype");
+}
+
+
+h1 {
+margin: 10%;
+overflow-x: hidden;
+font-family: 'Bebas Neue';
+font-size: 2.5rem;
+}
+
+body {
+color: #FFFFFF
+}
+
+/* Adapted from code submitted by user @AnnMarieW to the Plotly Community Forum (Available from: https://community.plotly.com/t/change-textcolor-for-dropdown-menu/35230/2) */
+
+/* input box */
+.Select-control {
+    background-color: black;
+}
+
+
+/* changes the text color of input box */
+.Select-value-label {
+    color: white !important;
+}
+
+.Select--single > .Select-control .Select-value, .Select-placeholder {
+    border: 1px solid grey;
+    border-radius: 4px;
+}
+
+
+/* dropdown menu options */
+.VirtualizedSelectOption {
+    background-color: black;
+    color: white;
+ }
+
+
+/* dropdown menu hover effect */
+.VirtualizedSelectFocusedOption {
+    background-color: black;
+    opacity: .7;
+}
+
+
+/* border on focus - default is blue
+ * shadow box around input box.  default is blue
+ */
+.is-focused:not(.is-open) > .Select-control {
+  border-color: var(--primary); 
+  box-shadow: none;
+}
+
+
+
+
+/* this colors the input box text and x  of multi dropdown*/
+.Select--multi .Select-value {
+  color: white;
+}
+
+/* Adapted from code submitted by user @MattAff to Stack Overflow (Available from: https://stackoverflow.com/questions/44943464/plot-lydash-core-components-slider-color-change) */
+.rc-slider-track {
+    background-color: #E50914;
+  }
+  
+  .rc-slider-dot-active {  
+    border-color: #E50914;
+    border: solid 2px #E50914;
+  }
+  
+  .rc-slider-handle {
+    background-color: #E50914;
+    border-color: #E50914;
+  }
+  
+  .rc-slider-handle:hover {
+    border-color: #E50914;
+  }
+  
+  .rc-slider-handle-active:active {
+    border-color: #E50914;
+  }
