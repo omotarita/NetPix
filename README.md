@@ -49,6 +49,7 @@ The advantage of using a bubble chart over other types of data visualisation is 
 
 Furthermore, given our target audience (young adults) and their purpose for using this visualisation (maximising their entertainment and minimising the time it takes to achieve this), one can assume that they'll be more concerned with quickly observing patterns than crunching numbers. As such, a key aim for both this visualisation and the subsequent one is to communicate the entertainment prospects of each movie as clearly as possible.
 
+
 ### 2. User Selection Statistics (Wind Rose/Stacked Polar Bar Chart)
 
 Finally, on confirming their selection of movie/s, users are navigated to a page displaying the same movie information shown upon hovering over the bubble chart, such as the title/s and cover image/s and, additionally, a brief description of the/each movie and a data visualisation providing a clearer gauge on how their selection compares to other options. The purpose of this visualisation is to guide users’ decision-making further, by showing a more “zoomed-in” view of the data for a small number of movies/movie combinations, whilst highlighting the user’s selected movie/s to support comparison across these options and, subsequently, facilitate the validation of their final, confirmed choice.
@@ -73,20 +74,48 @@ Both data visualisations, as well as the entire app, will feature styling consis
 
 ### 1. Results (Bubble Chart)
 
+<details>
+  <summary>Target questions.</summary>
+ 
 1. *What are the most popular/highest scoring movies that match a user’s given preferences (their preferred genres and/or the maximum length of time they have to spend watching)?*
 2. *How many of these movies can fit into a user’s allotted movie-watching time?*
 3. *Is there a correlation between a movie’s popularity and the vote (or rating) awarded to it by viewers?*
+ 
+ </details>
+
+
+It was difficult to maintain clarity with this visualisation as, due to the vastness of the dataset from which it's created, it tended towards becoming quite cluttered and data points became relatively indiscernible. I aimed to remedy this by restricting the number of movies visualised to a user's top 20 results, however this made it worse, as the results ended up becoming heavily clustered.
+
+Ultimately I implemented some code which restricted the number of movies visualised to a random sample of 20% of the movies that matched user's preferences; this ensured variation between the results (thus facilitating clearer cross-comparison).
+
 
 ![Bubble chart rendered by my Dash app](assets/images/bubble_trial.png)
 
-Not so much of a correlation between popularity and vote - more of a correlation (negative) between popularity and match! The best matches tended to be less popular and the more popular movies tended to match the least. Match and popularity were independent variable, so this was interesting to see
+
+I believe the final visualisation was successful at answering the questions listed. As you can see in the example image provided above, bubbles of different sizes can be clearly distinguished, thus effectively indicating the best matching movies. As the match score awarded to a movie is dependent on its genre match adherence, the colourscale to the right of the visualisation also helps facilitate its effectiveness at conveying a user's best matches. Additionally, the colourscale corresponds to Netflix's own brand palette, which should help captivate our target audience.
+
+By plotting points against their popularity and average scores, one can distinctly recognise the most popular/highest scoring movies given their preferences. However, as shown in the image above, these parameters don't always indicate how close of a match a movie will be. Furthermore, there appears to be minimal correlation between movies' popularity and their vote, thus answering the third target question.
+
+The visualisation would be improved by being shown in a larger format, as this would help space data points out and reduce some of the apparent clustering observed. However, this wasn't possible in this case, due to the spatial constraints of the dashboard.
+
 
 ### 2. Results (Wind Rose)
 
+<details>
+  <summary>Target questions.</summary>
+ 
 1. *How do the popularity and the average score for a user’s chosen movie compare to that of alternative matching movies and the overall average for its genre? (In the case of only one movie being chosen)*
 2. *How do the average popularity and the average score for a user’s chosen set of movies compare to these statistics for alternative sets of movies? (In the case of multiple movies being chosen)*
+ 
+ </details>
 
-... goes a step further by giving the option to deselect (declutter) the chart as users narrow down their decisions
+I wasn't able to implement functionality to allow for the selection of multiple movies; as such, the second target question was not answered. 
+
+The polar chart visualisation is effective at conveying differences between a user's selected movie and alternative options, although this varies depending on how good of a match the selected movie is (the worse the match, the clearer the differences between it and the alternative options). 
+
+Nonetheless, the polar charts rendered by the NetPix app stand out more than anticipated, likely due to my hiding of the radial and angular gridlines which I didn't initially think would be possible, and the contrast between its colour scheme and the dark dashboard background. 
+
+See below an example of one of these visualisations.
 
 ![Polar chart rendered by my Dash app](assets/images/polar_trial.png)
 
@@ -96,6 +125,16 @@ Not so much of a correlation between popularity and vote - more of a correlation
 Given my unfamiliarity with Plotly and Dash prior to starting this project, it was difficult to ascertain how much time I would need for each task; which made sprint planning impossible, as it requires the assignment of deadlines. Thus, I decided instead to opt to use the Kanban Agile strategy to plan out the tasks I needed to undertake for this project and manage my delivery of these.
 
 I started by fractionating my project into a few broad categories of tasks, namely "Visualisations", "Interactivity", "Styling", "Testing", before disambiguating these by breaking them down further. Eventually I arrived at a long set of minor, doable tasks for each category. Using some in-built Kanban software on my laptop, I created three areas: "Backlog", "In Progress" and "Done", and placed all the tasks in "Backlog". I began each working session by working through the tasks under "In Progress" (which were usually moved there at the end of the previous session, and decided upon based on my progress and the wider category of task they fell under; I tried to complete each category sequentially).
+
+
+## Continuous Integration
+
+<details>
+  <summary>See here the results of a build attempt using CircleCI.</summary>
+ 
+![Build Image](.circleci/build_fail.png)
+ 
+ </details>
 
 
 ## Bibliography
