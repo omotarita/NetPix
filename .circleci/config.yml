@@ -10,9 +10,9 @@ jobs:
       - run:
           name: Run app
           command: |
+            pip install -r requirements.txt
             python3 netpix.py
             . venv/bin/activate
-            pip install -r requirements.txt
       - save_cache:
           key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
           paths:
