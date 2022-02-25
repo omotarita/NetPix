@@ -409,7 +409,7 @@ def comparisons_polar(selection, df):
         template = 'plotly_dark',
         paper_bgcolor='#141414',
         plot_bgcolor='#141414',
-        title="This is how your current selection compares to some other options",
+        title="This is how your current selection compares to some of your other recommendations",
         font_size=13,
         title_x=0.5,
         legend_font_size=11,
