@@ -99,7 +99,7 @@ By plotting points against their popularity and average scores, one can distinct
 The visualisation would be improved by being shown in a larger format, as this would help space data points out and reduce some of the apparent clustering observed. However, this wasn't possible in this case, due to the spatial constraints of the dashboard.
 
 
-### 2. Results (Wind Rose)
+### 2. Results (Wind Rose/Polar Chart)
 
 <details>
   <summary>Target questions.</summary>
