@@ -1,111 +1,66 @@
 from doctest import OutputChecker
 import dash, json, math, numpy
-import pandas as pd, plotly.express as px, plotly.graph_objs as go
-import dash_bootstrap_components as dbc
+import pandas as pd, plotly.express as px, plotly.graph_objs as go, dash_bootstrap_components as dbc
 from pathlib import Path
 from dash import Dash, dcc, html, Input, Output, State
 from cmath import nan
 from flask import redirect
 
 external_stylesheets = ['assets/custom.css', dbc.themes.BOOTSTRAP]
-
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-#app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SKETCHY])
-#later do the thing that surpresses errors
-
 
 DATA_PATH = Path(__file__).parent.joinpath('data')
 MOVIE_DATA_FILEPATH = Path(__file__).parent.joinpath('data', 'updated_complete_data.csv')
 genre_list = ['Action','Adventure','Animation','Comedy','Crime','Documentary','Drama','Family','Fantasy','History','Horror','Music','Mystery','Science-Fiction','Romance','Thriller','TV Movie','War','Western']
-df_movies = pd.read_csv(MOVIE_DATA_FILEPATH)
-
-
-#fig_bubble_chart = results_bubble()[0]
-#fig_polar_chart = comparisons_polar(input)
-
-
 
 app.layout = html.Div(style={'background-color': '#141414'}, children=[
-
     dbc.Container([
+
             dcc.Store(id='hidden-store', storage_type='memory'),
-            #html.Div(id='some-store'),
             dbc.Row([
                 html.Div(style={'text-align': 'center'}, children=[
                     html.Br(),
-                    #html.H1("N E T P I X", style={'color': '#E50914', 'text-align': 'center'}),
                     html.Img(id='logo', width=300, src="assets/images/logo.png"),
-                    #html.H2(children=["Helping you pick the best flicks"], style={'color': '#FFFFFF', 'font-size': '30px'}),
-                ])
-                
-            ]),
-
-            
-            
+                    ]) 
+                ]),
             html.Br(),
-            dbc.Row([
-                
-
-            ]),
-            
             html.Br(),
             html.Br(),
             dbc.Row([
                 html.Div(style={'text-align': 'center'}, children=[
                     html.H3(children=["What are your preferences?"], style={'color': '#FFFFFF', 'font-family': 'Helvetica Neue', 'font-size': '26px' , 'opacity': '0.7'}),
                 ])
-
             ]),
             html.Br(),
-
             dbc.Row([
-
                 dcc.Dropdown(
                         id='genre-dropdown',
                         options=[{'label': x, 'value': x} for x in genre_list],
                         placeholder='Select your preferred genres (we recommend picking at least 3)',
                         multi=True
-
                         ),
-
-            ]),
-
+                ]),
             html.Br(),
             html.Br(),
-
             dbc.Row([
-                
-
                 dcc.Slider(min=0, max=360, step=5,
                     value=150,
                     tooltip={"placement": "bottom", "always_visible": True}, 
                     id='runtime-slider'
                     ),
-
                 html.Div(id='slider-output-container')
-
-            ]),
-
+                ]),
             html.Br(),
             html.Br(),
-
-
             html.H3(children=["Here's a list of movies that match your preferences"]),
             html.Br(),
-
             dbc.Row([
                 dbc.Col(width=4, children=[
                     dcc.Dropdown(
                         id='movie-dropdown',
-                        #doesn't look like dropdown is showing all the options/nor even the right options. change df_User to df from results_bubble and check again
-                        #options=[],
-                        #options=[{'label':i,'value': i} for i in {}],
-                        #options=[{'label': i,'value': i} for i in df_movies['Title'].tolist()],
-                        #value='Happy Feet',
                         placeholder='Pick a movie'
-
-                    ),
-                html.Div(id='description-box', style={'text-align': 'center'}, children=[
+                        ),
+                    html.Div(id='description-box', style={'text-align': 'center'}, children=[
                         html.Br(),
                         html.H2(id='header', children={}),
                         html.A(id='match', style={'font-size': '18px', 'color': '#d3d3d3'}, children={}),
@@ -114,35 +69,27 @@ app.layout = html.Div(style={'background-color': '#141414'}, children=[
                         html.Br(),
                         html.Br(),
                         html.Img(id='poster', width=450, src="https://www.colorhexa.com/141414.png")
-
-                    ])    
-                    
-                ]),
-
+                        ])       
+                    ]),
                 dbc.Col(width=8, children=[
                     dbc.Row([
                         dcc.Graph(
                             id='bubble-chart',
                             figure={}
-                        )
-                    ]),
+                            )
+                        ]),
                     html.Br(),
                     dbc.Row([
                         dcc.Graph(
                             id = 'polar-chart',
                             figure={}
-                        )
+                            )
+                        ])
                     ])
-                
-                ])
-
             ]),
-
-        
         ],
     fluid=True,
     ),
-
 ])
 
 @app.callback(
@@ -181,12 +128,10 @@ def update_user(time_value, genre_value):
 
     df_User = generate_dataframe(genre_prefs_User, time_value)
     bubble = results_bubble(df_User)
-    #movie_options = generate_dataframe(genre_prefs_User, time_value)[0]
 
     movie_options = df_User['Title'].tolist()
 
     test_options = [{'label': i,'value': i} for i in df_User['Title'].tolist()]
-    #movie_options.tolist()
 
     df_User = df_User.to_json()
 
@@ -337,7 +282,7 @@ def results_bubble(df):
                             line=dict(width=2,
                                         color='antiquewhite')                            
                             
-                          ) #add axis labels
+                          )
     )])
 
     fig.update_layout(
@@ -422,7 +367,6 @@ def comparisons_polar(selection, df):
     fig.update_polars(radialaxis_showline=False)
     fig.update_polars(radialaxis_showticklabels=False)
 
-    #remove hover details, remove wind details, remove all numbers tbh
     return fig
 
 def movie_box(selection, df):
@@ -438,6 +382,7 @@ def movie_box(selection, df):
     match_score = df.loc[selection_index,'Percent Match Score']
     overview = df.loc[selection_index,'Overview']
     poster_link = f"https://image.tmdb.org/t/p/w500{df.loc[selection_index,'Poster Path']}"
+    
     return title, match_score, overview, poster_link
 
 
