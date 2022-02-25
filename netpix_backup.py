@@ -20,8 +20,8 @@ genre_list = ['Action','Adventure','Animation','Comedy','Crime','Documentary','D
 df_movies = pd.read_csv(MOVIE_DATA_FILEPATH)
 
 
-#viz_bubble_chart = results_bubble()[0]
-#viz_polar_chart = comparisons_polar(input)
+#fig_bubble_chart = results_bubble()[0]
+#fig_polar_chart = comparisons_polar(input)
 
 
 
@@ -108,7 +108,9 @@ app.layout = html.Div(style={'background-color': '#141414'}, children=[
                 html.Div(id='description-box', style={'text-align': 'center'}, children=[
                         html.Br(),
                         html.H2(id='header', children={}),
-                        html.A(id='text', style={'font-size': '18px'}, children={}),
+                        html.A(id='match', style={'font-size': '18px', 'color': '#d3d3d3'}, children={}),
+                        html.Br(),
+                        html.A(id='text', style={'font-size': '16.5px'}, children={}),
                         html.Br(),
                         html.Br(),
                         html.Img(id='poster', width=450, src="https://www.colorhexa.com/141414.png")
@@ -123,9 +125,7 @@ app.layout = html.Div(style={'background-color': '#141414'}, children=[
                             id='bubble-chart',
                             figure={}
                         )
-                    
                     ]),
-                    html.Br(),
                     html.Br(),
                     dbc.Row([
                         dcc.Graph(
@@ -193,7 +193,7 @@ def update_user(time_value, genre_value):
     return df_User, time, bubble, test_options
 
 @app.callback(
-    [Output('polar-chart', 'figure'), Output('header', 'children'), Output('text', 'children'), Output('poster', 'src')],
+    [Output('polar-chart', 'figure'), Output('header', 'children'), Output('match', 'children'), Output('text', 'children'), Output('poster', 'src')],
     Input('movie-dropdown', 'value'),
     State('hidden-store', 'hidden')
 )
@@ -208,12 +208,13 @@ def update_selection(input, data):
     """
     df_User = pd.read_json(data)
 
-    viz = comparisons_polar(input, df_User)
+    fig = comparisons_polar(input, df_User)
     title = movie_box(input, df_User)[0]
-    overview = movie_box(input, df_User)[1]
-    poster = str(movie_box(input, df_User)[2])
+    match = f"{str(movie_box(input, df_User)[1])}% match"
+    overview = movie_box(input, df_User)[2]
+    poster = str(movie_box(input, df_User)[3])
 
-    return viz, title, overview, poster
+    return fig, title, match, overview, poster
 
 def generate_dataframe(pref_genres, pref_time):
     '''
@@ -263,10 +264,10 @@ def generate_dataframe(pref_genres, pref_time):
         match.insert(n, math.trunc(match_score))
         genre_adherence.insert(n, (genre_score ** 0.7)/(len(pref_genres) ** 0.7))
         
-        if df_movies['Tagline'].iloc[n] == nan:
-            hover_text.insert(n, f"{df_movies['Title'].iloc[n]}{chr(10)}{match[n]}% match!{newline}Average Vote:{df_movies['Average Vote (/10)'].iloc[n]}{newline}Popularity:{df_movies['Popularity'].iloc[n]}{newline}Runtime:{df_movies['Runtime (minutes)'].iloc[n]}")
+        if type(df_movies['Tagline'].iloc[n]) != str :
+            hover_text.insert(n, f"{df_movies['Title'].iloc[n]}{chr(10)}{match[n]}% match!{chr(10)}Average Vote:{df_movies['Average Vote (/10)'].iloc[n]}{chr(10)}Popularity:{df_movies['Popularity'].iloc[n]}{chr(10)}Runtime:{df_movies['Runtime (minutes)'].iloc[n]}")
         else:
-            hover_text.insert(n, f"{df_movies['Title'].iloc[n]}{chr(10)}{df_movies['Tagline'].iloc[n]}{newline}{match[n]}% match!{newline}Average Vote:{df_movies['Average Vote (/10)'].iloc[n]}{newline}Popularity:{df_movies['Popularity'].iloc[n]}{newline}Runtime:{df_movies['Runtime (minutes)'].iloc[n]}")
+            hover_text.insert(n, f"{df_movies['Title'].iloc[n]}{chr(10)}{df_movies['Tagline'].iloc[n]}{chr(10)}{match[n]}% match!{chr(10)}Average Vote:{df_movies['Average Vote (/10)'].iloc[n]}{chr(10)}Popularity:{df_movies['Popularity'].iloc[n]}{chr(10)}Runtime:{df_movies['Runtime (minutes)'].iloc[n]}")
 
         n +=1
 
@@ -316,7 +317,7 @@ def results_bubble(df):
     # Adapted from code published in the Plotly documentation (Available from: https://plotly.com/python/bubble-charts/)
     size = 3.5 ** (df['Percent Match Score']/10)
 
-    viz = go.Figure(data=[go.Scatter(
+    fig = go.Figure(data=[go.Scatter(
                           x=df['Popularity'],
                           y=df['Average Vote (/10)'],
                           mode='markers',
@@ -330,6 +331,8 @@ def results_bubble(df):
                             sizemin = 10,
                             color=df['Genre Preference Adherence'],
                             colorscale=[(0,"#e50914"), (1,"#430206")],
+                            colorbar={"title": 'Genre Preference Match'},
+                            showscale=True,
                             opacity=1,
                             line=dict(width=2,
                                         color='antiquewhite')                            
@@ -337,13 +340,24 @@ def results_bubble(df):
                           ) #add axis labels
     )])
 
-    viz.update_layout(
+    fig.update_layout(
+        title="Look for the biggest bubbles; their size corresponds to how close of an overall match they are",
+        font_size=9,
+        title_x=0.5,
+        xaxis_title="Popularity",
+        yaxis_title="Average Vote (/10)",
+        legend_title="Legend Title",
+        font=dict(
+            family="Helvetica Neue",
+            size=14,
+            color="white"
+            ),
         template = 'plotly_dark',
         paper_bgcolor='#141414',
         plot_bgcolor='#141414'
     )
 
-    return viz 
+    return fig 
 
 def comparisons_polar(selection, df):
     '''
@@ -371,35 +385,45 @@ def comparisons_polar(selection, df):
     df_Comparisons = pd.DataFrame(comparisons, columns=cols)
 
     # Adapted from code published in the Plotly documentation (Available from: https://plotly.com/python/wind-rose-charts/) 
-    viz = go.Figure()
-    viz.add_trace(go.Barpolar(
+    fig = go.Figure()
+    fig.add_trace(go.Barpolar(
         r=df_Comparisons['Popularity'],
+        theta=df_Comparisons['Title'],
         name='Popularity',
         marker_color='#e50914'
     ))
-    viz.add_trace(go.Barpolar(
+    fig.add_trace(go.Barpolar(
         r=df_Comparisons['Average Vote (/10)'],
+        theta=df_Comparisons['Title'],
         name='Average Vote (/10)',
         marker_color='#b20710'
     ))
-    viz.add_trace(go.Barpolar(
+    fig.add_trace(go.Barpolar(
         r=df_Comparisons['Genre Preference Adherence'],
-        name='Genre Preference Adherence',
+        theta=df_Comparisons['Title'],
+        name='Genre Preference Match',
         marker_color='#550307'
     ))
-    viz.update_traces(text=df_Comparisons['Title'])
-    viz.update_layout(
+    fig.update_traces(text=df_Comparisons['Title'])
+    fig.update_layout(
         template = 'plotly_dark',
         paper_bgcolor='#141414',
         plot_bgcolor='#141414',
         title="This is how your current selection compares to some other options",
-        font_size=16,
-        legend_font_size=16,
-        polar_angularaxis_rotation=90,
+        font_size=13,
+        title_x=0.5,
+        legend_font_size=11,
+        polar_angularaxis_rotation=60,
+        hovermode=None
     )
+    fig.update_polars(angularaxis_showgrid=False)
+    fig.update_polars(angularaxis_showline=False)
+    fig.update_polars(radialaxis_showgrid=False)
+    fig.update_polars(radialaxis_showline=False)
+    fig.update_polars(radialaxis_showticklabels=False)
 
     #remove hover details, remove wind details, remove all numbers tbh
-    return viz
+    return fig
 
 def movie_box(selection, df):
     '''
@@ -411,9 +435,10 @@ def movie_box(selection, df):
     '''
     title = selection
     selection_index = df.index[df['Title']==selection].tolist()[0]
+    match_score = df.loc[selection_index,'Percent Match Score']
     overview = df.loc[selection_index,'Overview']
     poster_link = f"https://image.tmdb.org/t/p/w500{df.loc[selection_index,'Poster Path']}"
-    return title, overview, poster_link
+    return title, match_score, overview, poster_link
 
 
 if __name__ == '__main__':
