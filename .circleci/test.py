@@ -4,6 +4,6 @@ def test(dash_duo):
 
     app = import_app(".circleci.app")
 
-    timeout = 5
+    timeout = 30
 
     return None
