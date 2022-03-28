@@ -5,7 +5,9 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
 from pathlib import Path
-import json, math, pages.old_netpix as old_netpix
+import json, math
+#import pages.old_netpix as old_netpix
+import pages.netpix as netpix
 
 
 MOVIE_DATA_FILEPATH = Path(__file__).parent.joinpath('data', 'updated_complete_data.csv')
@@ -184,7 +186,8 @@ def setup_comparisons_polar():
     #How many medals did each country win in the 2012 London Summer Olympics? selection_matchp+2
 
     #movie_selection = user()[1]
-    movie_selection = old_netpix.update_selection()
+    #movie_selection = old_netpix.update_selection()
+    movie_selection = netpix.update_selection()
 
     df_User = user()[0]
 

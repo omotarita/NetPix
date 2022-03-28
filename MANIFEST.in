@@ -1,2 +1,4 @@
+graft netpix_app/static
+graft netpix_app/templates
 global-exclude *.py[cod]
 exclude test*/*.py

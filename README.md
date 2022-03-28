@@ -1,8 +1,8 @@
 
-# Coursework 1 
+# Coursework 2 
 
 ### Repository URL
-[Coursework Repository](https://github.com/omotarita/comp0034-cw1)
+[Coursework Repository](https://github.com/omotarita/comp0034-cw2)
 
 ### Set-Up Information
 All dependencies in requirements.txt should be installed in order to run the code in this repository. Use the command 'pip install ...' at Terminal to do so.
