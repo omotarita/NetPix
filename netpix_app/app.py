@@ -1,14 +1,15 @@
 from flask import Flask
-from netpix_app import create_app
+from netpix_app.auth import create_app
+from netpix_app.config import DevelopmentConfig
 
 app = create_app()
 
 @app.route('/')
 def hello_world():
-    return 'Hello World!' #this should be the top half of the dashboard submitted for cw1
+    return 'Netpix Homepage' #this should be the top half of the dashboard submitted for cw1
 
 @app.route('/users/<username>')
-def example12():
+def example11():
     pass
 
 @app.route('/users/signup')
@@ -24,24 +25,24 @@ def example02():
     pass  
 
 @app.route('/movie/<movieID>')
-def example3():
+def example04():
     pass #this should be the bottom half of the dashboard submitted for cw1
 
 @app.route('/movie/results/<sessionID>')
-def example3():
+def example03():
     pass #this should be the top half of the dashboard submitted for cw1 (the bubble chart + a list)
 
 
 @app.route('/users/blend/<blendID>')
-def example4():
+def example05():
     pass
 
 @app.route('/users/settings/<username>')
-def example5():
+def example09():
     pass
 
 @app.route('/users/saved/<username>')
-def example6():
+def example10():
     pass
 
 
