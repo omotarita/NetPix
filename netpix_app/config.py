@@ -16,7 +16,6 @@ class Config(object):
     DATA_PATH = Path('data')
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + str(DATA_PATH.joinpath('example.sqlite'))
 
-
 class ProductionConfig(Config):
     ENV = 'production'
 

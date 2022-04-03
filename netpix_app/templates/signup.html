@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+{% block content %}
+<form method="POST" action="{{ url_for('signup') }}">
+    {{ form.csrf_token }}
+    {{ form.first_name.label }} {{ form.first_name() }} <br>
+    {{ form.last_name.label }} {{ form.last_name() }} <br>
+    {{ form.username.label }} {{ form.username() }} <br>
+    {{ form.email.label }} {{ form.email() }} <br>
+    {{ form.password.label }} {{ form.password() }} <br>
+    {{ form.password_repeat.label }} {{ form.password_repeat() }} <br>
+    {{ form.accept_tos.label }} {{ form.accept_tos() }} <br>
+    <input type="submit" value="Sign Up">
+</form>
+{% endblock %}

@@ -4,14 +4,15 @@
 }
 
 
-h1 {
+/*h1 {
 margin: 10%;
 overflow-x: hidden;
 font-family: 'Bebas Neue';
 font-size: 2.5rem;
-}
+}*/
 
 body {
+background-color: rgb(33, 35, 36);
 color: #FFFFFF
 }
 

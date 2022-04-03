@@ -1,7 +1,6 @@
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, render_template
 from netpix_app import create_app
 from netpix_app.config import DevelopmentConfig
-from netpix_app.auth.forms import SignupForm, LoginForm
 
 app = create_app()
 
@@ -18,18 +17,12 @@ def signup():
     form = SignupForm()
     if form.validate_on_submit():
         name = form.first_name.data
-        return f"Thanks for registering. Welcome to Netpix"
+        return f"Welcome {name}!"
     return render_template('signup.html', title='Create an Account', form=form)
 
 @app.route('/login')
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        name = form.first_name.data
-        return redirect(url_for('index'))
-    else:
-        return f"Failed!"
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('login.html')
 
 @app.route('/movie/choose/<sessionID>') #possibly remove... irrelevant ?
 def example02():
@@ -62,7 +55,6 @@ def example12():
 @app.route('/505')
 def example13():
     return render_template('505.html')
-
 
 if __name__ == '__main__':
     app.run(debug=True)
