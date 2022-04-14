@@ -11,7 +11,18 @@
 
     <header>
         {% include 'navbar.html' %}
+        {# Displays flashed messages on a page #}
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
     </header>
+    
     <main>
         <div class="container">
             {% block content %}

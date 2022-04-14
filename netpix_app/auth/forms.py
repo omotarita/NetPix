@@ -3,8 +3,6 @@ from wtforms import StringField, PasswordField, EmailField, BooleanField, FormFi
 from wtforms.validators import DataRequired, EqualTo
 
 class SignupForm(FlaskForm):
-    first_name = StringField(label='First Name', validators=[DataRequired()])
-    last_name = StringField(label='Last Name', validators=[DataRequired()])
     username = StringField('Username', [validators.Length(min=4, max=22)])
     email = EmailField(label='Email Address', validators=[DataRequired()])
     password = PasswordField(label='Password', validators=[DataRequired()])

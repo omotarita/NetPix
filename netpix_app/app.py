@@ -1,9 +1,11 @@
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, render_template, url_for, redirect, Blueprint
 from netpix_app import create_app
 from netpix_app.config import DevelopmentConfig
 from netpix_app.auth.forms import SignupForm, LoginForm
 
 app = create_app()
+bp_main = Blueprint('main', __name__)
+
 
 @app.route('/')
 def index():
@@ -12,7 +14,7 @@ def index():
 '''@app.route('/users/<username>')
 def profile():
     return render_template('display_profile.html')'''
-
+'''
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
@@ -21,13 +23,12 @@ def signup():
         return f"Thanks for registering. Welcome to Netpix"
     return render_template('signup.html', title='Create an Account', form=form)
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        name = form.first_name.data
         return redirect(url_for('index'))
-    else:
+    elif form.is_submitted and form.form_errors:
         return f"Failed!"
     return render_template('login.html', title='Sign In', form=form)
 
@@ -62,7 +63,7 @@ def example12():
 @app.route('/505')
 def example13():
     return render_template('505.html')
-
+'''
 
 if __name__ == '__main__':
     app.run(debug=True)

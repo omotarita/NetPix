@@ -4,14 +4,15 @@ from netpix_app.config import DevelopmentConfig
 
 app = create_app()
 
+'''
 @app.route('/')
 def index():
     return render_template('index.html', title="Home") #this should be the top half of the dashboard submitted for cw1
-
+'''
 '''@app.route('/users/<username>')
 def profile():
     return render_template('display_profile.html')'''
-
+'''
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
@@ -56,5 +57,6 @@ def example12():
 def example13():
     return render_template('505.html')
 
+'''
 if __name__ == '__main__':
     app.run(debug=True)
