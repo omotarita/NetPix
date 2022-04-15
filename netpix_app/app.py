@@ -3,7 +3,7 @@ from netpix_app import create_app
 from netpix_app.config import DevelopmentConfig
 from netpix_app.auth.forms import SignupForm, LoginForm
 
-app = create_app()
+app = create_app(DevelopmentConfig) #change config once developed (? - check submission advice from Week 6)
 bp_main = Blueprint('main', __name__)
 
 

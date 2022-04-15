@@ -6,7 +6,7 @@ from flask_wtf.csrf import CSRFProtect
 csrf = CSRFProtect()
 db = SQLAlchemy()
 
-def create_app():
+def create_app(config_class_name):
     '''
     Initialise the Netpix Flask application.
     :type config_classname: Specifies the configuration class
@@ -14,11 +14,12 @@ def create_app():
     '''
 
     app = Flask(__name__)
-    app.config.from_object(DevelopmentConfig) #change config once developed (? - check submission advice from Week 6)
+    app.config.from_object(config_class_name) 
     csrf.init_app(app) #should i have both?
     db.init_app(app) #see above
     #login_manager.init_app(app)
     #csrf.init_app(app)
+
     with app.app_context():
         from netpix_app.models import User
         db.create_all()

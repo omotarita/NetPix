@@ -4,7 +4,7 @@
     <form method="POST" action="{{ url_for('auth.login') }}">
         </br>
         {{ form.csrf_token }}
-        {{ form.email.label }} {{ form.email() }} <br>
+        {{ form.username.label }} {{ form.username() }} <br>
         {{ form.password.label }} {{ form.password() }} <br>
         {{ form.remember_me.label }} {{ form.remember_me() }} <br>
         <input type="submit" value="Login">

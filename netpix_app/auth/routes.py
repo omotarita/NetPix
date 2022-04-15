@@ -1,5 +1,7 @@
-from flask import Blueprint, redirect, url_for, flash
-from flask import render_template
+from flask import Blueprint, redirect, url_for, flash, request, render_template
+from sqlalchemy.exc import IntegrityError
+from netpix_app import db
+from netpix_app.models import User
 from netpix_app.auth.forms import SignupForm, LoginForm
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -16,18 +18,27 @@ def profile():
 def signup():
     form = SignupForm()
     if form.validate_on_submit():
-        username = form.username.data
-        flash(f"Hello, {username}. You are signed up.")
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        print(user)
+        try:
+            db.session.add(user)
+            db.session.commit()
+            flash(f"Hello, {user.username}. You are signed up.")
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'Error, unable to register {form.email.data}. ', 'error')
+            return redirect(url_for('auth.signup'))
         return redirect(url_for('index'))
     return render_template('signup.html', title='Create an Account', form=form)
 
-@auth_bp.route('/login')
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
         return redirect(url_for('index'))
-    elif form.is_submitted and form.form_errors:
-        return f"Failed!"
+    #elif form.is_submitted and form.form_errors:
+    #    return f"Failed!"
     return render_template('login.html', title='Login', form=form)
 
 @auth_bp.route('/movie/choose/<sessionID>') #possibly remove... irrelevant ?
