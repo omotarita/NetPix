@@ -32,13 +32,9 @@ class SignupForm(FlaskForm):
                 raise ValidationError('An account is already registered for that email address')
 
 class LoginForm(FlaskForm):
-    #email = EmailField(label='Email Login', validators=[DataRequired(), EqualTo('Email Address', message="There doesn't seem to be an account with this email address. Sign up instead?")])
-    #email_or_username = StringField(label='Email or username', validators=[DataRequired()]) or EmailField(label='Email or username', validators=[DataRequired()])
-    #email = EmailField(label='Email', validators=[DataRequired()])
     username = StringField(label='Username', validators=[DataRequired()]) 
-    #password = PasswordField(label='Password Login', validators=[DataRequired(), EqualTo('Password', message="Forgotten your password?")])
     password = PasswordField(label='Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember Me', default=False)
+    remember = BooleanField('Remember Me', default=False)
 
     def validate_login(self, username, password):
         user = User.query.filter_by(username=username.data).first()

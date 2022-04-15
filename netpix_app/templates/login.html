@@ -6,7 +6,13 @@
         {{ form.csrf_token }}
         {{ form.username.label }} {{ form.username() }} <br>
         {{ form.password.label }} {{ form.password() }} <br>
-        {{ form.remember_me.label }} {{ form.remember_me() }} <br>
+        {{ form.remember.label }} {{ form.remember() }} <br>
+        {# Display the form validation errors #}
+        {% for field, errors in form.errors.items() %}
+            <div class="alert alert-error">
+                {{ form[field].label }}: {{ ', '.join(errors) }}
+            </div>
+        {% endfor %}
         <input type="submit" value="Login">
     </form>
 </div>

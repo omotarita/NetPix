@@ -1,7 +1,14 @@
-from flask import Flask, render_template, url_for, redirect, Blueprint
 from netpix_app import create_app
 from netpix_app.config import DevelopmentConfig
+from flask import Blueprint, redirect, url_for, flash, request, render_template, abort
+from urllib.parse import urlparse, urljoin
+from sqlalchemy.exc import IntegrityError
+from netpix_app import db, login_manager
+from netpix_app.models import User
 from netpix_app.auth.forms import SignupForm, LoginForm
+from flask_login import LoginManager, login_required, login_user, logout_user, current_user
+from datetime import timedelta
+
 
 app = create_app(DevelopmentConfig) #change config once developed (? - check submission advice from Week 6)
 bp_main = Blueprint('main', __name__)
@@ -9,6 +16,9 @@ bp_main = Blueprint('main', __name__)
 
 @app.route('/')
 def index():
+    if not current_user.is_anonymous:
+        username = current_user.username
+        flash(f'Hi {username}. ')
     return render_template('index.html', title="Home") #this should be the top half of the dashboard submitted for cw1
 
 '''@app.route('/users/<username>')
