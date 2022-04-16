@@ -1,4 +1,5 @@
 from doctest import OutputChecker
+from click import style
 import dash
 import pandas as pd, plotly.graph_objs as go, dash_bootstrap_components as dbc
 from pathlib import Path
@@ -7,11 +8,14 @@ from cmath import nan
 #from flask import redirect
 
 external_stylesheets = [Path(__file__).parent.parent.joinpath('static/assets', 'custom.css'), dbc.themes.BOOTSTRAP]
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+#external_stylesheets = Path(__file__).parent.parent.parent.joinpath('netpix_app/static/assets/css', 'custom.css')
+#print("Here's the path")
+#print(external_stylesheets)
+#app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 genre_list = ['Action','Adventure','Animation','Comedy','Crime','Documentary','Drama','Family','Fantasy','History','Horror','Music','Mystery','Science-Fiction','Romance','Thriller','TV Movie','War','Western']
 
-app.layout = html.Div(style={'background-color': '#141414'}, children=[
+layout = html.Div(style={'background-color': '#141414'}, children=[
     dbc.Container([
 
             dcc.Store(id='hidden-store', storage_type='memory'),
@@ -41,7 +45,7 @@ app.layout = html.Div(style={'background-color': '#141414'}, children=[
             html.Br(),
             html.Br(),
             dbc.Row([
-                dcc.Slider(min=0, max=360, step=5,
+                dcc.Slider(min=0, marks=None, max=360, step=5,
                     value=150,
                     tooltip={"placement": "bottom", "always_visible": True}, 
                     id='runtime-slider'
