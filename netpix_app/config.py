@@ -13,6 +13,7 @@ class Config(object):
     DEBUG = False # Turns on debugging features in Flask
     SECRET_KEY = 'NS18dOS2VXubcs4e9z17CQ'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    UPLOADED_PHOTOS_DEST = Path(__file__).parent.joinpath("static/assets/images")
     ## DATA_PATH = Path('data') - keep commented
     #database_file = Path(__file__).parent.parent.joinpath("data", "example.sqlite")
     #SQLALCHEMY_DATABASE_URI = 'sqlite:///' + str(database_file)

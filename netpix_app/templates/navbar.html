@@ -1,7 +1,7 @@
 {# Adapted from code for a Bootstrap example navbar (Available from: https://getbootstrap.com/docs/5.0/components/navbar/) #}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg " style="background-color: #141414; color: white">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{{ url_for('index') }}"><img id="logo", width="150", src="{{ url_for('static', filename='assets/images/logo.png') }}"></a>
+      {# <a class="navbar-brand" href="{{ url_for('index') }}"><img id="logo", width="150", src="{{ url_for('static', filename='assets/images/logo.png') }}"></a> #}
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -13,9 +13,8 @@
             <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
           {% else %}
             <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
-            <a class="nav-link" href="/dashboard/">Dashboard</a>
+            <a class="nav-link" href="{{ url_for('auth.view_account') }}">My Account</a>
           {% endif %}
-          {# <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a> #}
         </div>
       </div>
     </div>

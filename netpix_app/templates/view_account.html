@@ -1,0 +1,66 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/custom.css') }}">
+{% extends 'layout.html' %}
+{% set title = 'My Account' %}
+{% block content %}
+</br>
+</br>
+<div class="d-flex justify-content-center">
+    <div class="card text-center" style="width: 35rem;">
+        <div class="card-header" style="width: 100%;">
+          My Account
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <img class="card-img-top" src="{{ url_for('static', filename=photo_url) }}" position="absolute" alt="User profile photo">
+                </div>    
+                <div class="col-sm-6">
+                    {% if first_name != None %}
+                        <h3 class="card-title">Hi {{ first_name }}</h3>
+                    {% else %}
+                        <h3 class="card-title">Hi @{{ username }}</h3>
+                    {% endif %}
+                    {% if (first_name != None) and (last_name != None) %}
+                        <p class="card-text">@{{ username }} • {{ first_name }} {{ last_name }} • {{ email }}</p>
+                    {% else %}
+                        <p class="card-text">{{ email }} • @{{ username }}</p>
+                    {% endif %}
+                <a href="{{ url_for('index') }}" class="btn btn-primary">Find a movie</a>
+                </div>         
+          </div>
+        </div>
+    </div>
+</div>
+</br>
+<div class="d-flex justify-content-between">
+
+    <div class="p-2"><h4>Saved Prefs</h4></div>
+    <div class="p-2">
+        <h4>Update Account Details</h4>
+        <form method="POST" action="{{ url_for('auth.view_account') }}" enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            {{ form.photo.label }} {{ form.photo() }} <br>
+            {{ form.first_name.label }} {{ form.first_name() }} <br>
+            {{ form.last_name.label }} {{ form.last_name() }} <br>
+            {# Display the form validation errors #}
+            {% for field, errors in form.errors.items() %}
+                <div class="alert alert-error">
+                    {{ form[field].label }}: {{ ', '.join(errors) }}
+                </div>
+            {% endfor %}
+            <input type="submit" value="Update Account">
+        </form>
+    </div>
+</div>
+</br>
+<div class="d-flex justify-content-between">
+    <div class="p-2"><h4>Blends</h4></div>
+    <div class="p-2">
+        <h4>Friends</h4>
+        <a href="{{ url_for('auth.find_friends') }}" class="btn btn-primary">Add Friends</a>
+    </div>
+</div>
+
+{% endblock %}
+
+{# {{ url_for('friends_search_results') }} #}

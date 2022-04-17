@@ -16,6 +16,7 @@
             {% if messages %}
                 <ul>
                 {% for message in messages %}
+                </br>
                     <li>{{ message }}</li>
                 {% endfor %}
                 </ul>
@@ -32,7 +33,10 @@
     </main>
 
 </head>
-<body background="#161c2d">
+<body style="background-color:rgb(20, 20, 20)">
     <script src="{{ url_for('static', filename='assets/js/bootstrap.bundle.js') }}" defer></script>
+    <script>
+        //document.querySelector('.search-bar').addEventListener('keydown', (search_users));
+    </script>
 </body>
 </html>

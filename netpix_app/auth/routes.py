@@ -1,14 +1,20 @@
+from queue import Empty
 from flask import Blueprint, redirect, url_for, flash, request, render_template, abort
 from urllib.parse import urlparse, urljoin
 from sqlalchemy.exc import IntegrityError
-from netpix_app import db, login_manager
-from netpix_app.models import User
-from netpix_app.auth.forms import SignupForm, LoginForm
+from sqlalchemy import insert, update, delete
+from netpix_app import db, login_manager, photos
+from netpix_app.models import User, Account
+from netpix_app.auth.forms import SignupForm, LoginForm, UpdateAccountForm
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from datetime import timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+import config
+import os
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+posts = Blueprint('posts', __name__, template_folder='templates')
 
 @auth_bp.route('/')
 def index():
@@ -28,7 +34,12 @@ def signup():
         try:
             db.session.add(user)
             db.session.commit()
+            user = User.query.filter_by(username=form.username.data).first()
+            account = Account(username=form.username.data, email=form.email.data, user_id=user.id)
+            db.session.add(account)
+            db.session.commit()
             flash(f"Hello, {user.username}. You are signed up.")
+            login_user(user)
         except IntegrityError:
             db.session.rollback()
             flash(f'Error, unable to register {form.email.data}. ', 'error')
@@ -67,7 +78,7 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-#here! 
+'''
 @auth_bp.route('/movie/choose/<sessionID>') #possibly remove... irrelevant ?
 def example02():
     return render_template('login.html')  
@@ -79,21 +90,98 @@ def example04():
 @auth_bp.route('/movie/results/<sessionID>')
 def example03():
     return render_template('display_results.html') #this should be the top half of the dashboard submitted for cw1 (the bubble chart + a list)
+'''
+
+
+@auth_bp.route('/users/account', methods=['GET', 'POST'])
+@auth_bp.route('/users/account/<username>', methods=['GET', 'POST'])
+@login_required #you have to be the user == <username> for this page to show 
+def view_account(username=None): #provides functionality which shows account details and updates them if requested
+    form = UpdateAccountForm()
+    username = current_user.username
+    account = Account.query.filter_by(username=username).first()
+    email = account.email
+    template_context = dict(username=username, email=email, first_name=None, last_name=None, photo_url=None)
+    if account.first_name != None:
+        first_name = account.first_name
+        template_context['first_name'] = first_name
+    if account.last_name != None:
+        last_name = account.last_name
+        template_context['last_name'] = last_name
+    if account.photo != None:
+        photo_url = 'assets/images/' + account.photo
+        template_context['photo_url'] = photo_url
+    #If updating account details..
+    if request.method == 'POST' and form.validate_on_submit(): 
+        if 'photo' in request.files:
+            if request.files['photo'].filename != '':  
+                filename = photos.save(request.files[
+                                           'photo'])
+        #account = Account.query.filter_by(username=username)
+        if form.first_name.data != '': # If it isn't empty on submit, update
+            account.first_name = form.first_name.data
+        if form.last_name.data != '':
+            account.last_name = form.last_name.data
+        if form.photo.data != None:
+            account.photo = filename
+        db.session.commit() # Saves whatever changes have been made
+        #filename = secure_filename(account.photo.filename)
+        #account.photo.save(os.path.join(auth_bp.instance_path, 'photos', filename))
+        return redirect(url_for('auth.view_account', form=form)) #should it return form results to be used in displaying user's profile?        
+    return render_template('view_account.html', form=form, **template_context) #profile should include settings and saved, therefore subsequent two functions may be redundant
+
+'''
+@auth_bp.route('/users/account/<username>/settings')
+@login_required #you have to be the user == <username> for this page to show 
+def example09():
+    return render_template('display_settings.html')
+
+@auth_bp.route('/users/account/<username>/saved')
+@login_required #you have to be the user == <username> for this page to show 
+def example10():
+    return render_template('display_saved.html')
+'''
+#here! 
+#want to add functionality to search and add friends
+@auth_bp.route('/users/find-friends', methods=['GET', 'POST'])
+@login_required
+def find_friends():
+    query = request.form['query']
+    matching_accounts = Account.query.filter(Account.username.contains(query)).all()
+    results = []
+    if matching_accounts == []:
+        message = "No matching users :("
+        results = None
+    else:
+        message = ""
+        for account in matching_accounts:
+            username = account.username
+            email = account.email
+            account_info = dict(username=username, email=email, first_name=None, last_name=None, photo_url=None)
+            if account.first_name != None:
+                first_name = account.first_name
+                account_info['first_name'] = first_name
+            if account.last_name != None:
+                last_name = account.last_name
+                account_info['last_name'] = last_name
+            if account.photo != None:
+                photo_url = 'assets/images/' + account.photo
+                account_info['photo_url'] = photo_url
+            results.append(account_info)
+    template_context = dict(results, message)
+    return render_template('find_friends.html', **template_context)
+
+'''
+@auth_bp.route('/users/<username>')
+@login_required
+def example25():
+    return render_template('display_profile.html')
 
 @auth_bp.route('/users/blend/<blendID>')
 @login_required
 def example05():
     return render_template('blend.html')
-
-@auth_bp.route('/users/settings/<username>')
-@login_required
-def example09():
-    return render_template('display_settings.html')
-
-@auth_bp.route('/users/saved/<username>')
-@login_required
-def example10():
-    return render_template('display_saved.html')
+'''
 
 @auth_bp.route('/404')
 def example12():

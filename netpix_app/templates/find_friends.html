@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+{% set title = 'Profile Display' %}
+{% block content %}
+<div>
+    <input class="search-bar" type="text" placeholder="Find Friends" name="query">
+    <input type="submit" value="Search">
+</div>
+    {% if result == None %}
+    <div>
+        <h6>{{ message }}</h6>
+    </div>
+    {% else %}
+        {% for account_info in results %}
+            </br>
+            <div class="d-flex justify-content-center">
+                <div class="card text-center" style="width: 35rem;">
+                    <div class="card-header" style="width: 100%;">
+                    Sample
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <img class="card-img-top" src="{{ url_for('static', filename=photo_url) }}" position="absolute" alt="User profile photo">
+                            </div>    
+                            <div class="col-sm-6">
+                                {% if account_info['first_name'] != None %}
+                                    <h3 class="card-title">Hi {{ first_name }}</h3>
+                                {% else %}
+                                    <h3 class="card-title">Hi @{{ account_info['username'] }}</h3>
+                                {% endif %}
+                                {% if (account_info['first_name'] != None) and (account_info['last_name'] != None) %}
+                                    <p class="card-text">@{{ account_info['username'] }} • {{ account_info['first_name'] }} {{ account_info['last_name'] }} • {{ account_info['email'] }}</p>
+                                {% else %}
+                                    <p class="card-text">{{ account_info['email'] }} • @{{ account_info['username'] }}</p>
+                                {% endif %}
+                            <a href="{{ url_for('index') }}" class="btn btn-primary">Add Friend</a>
+                            </div>         
+                    </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+
+{# This is all wrong ^ needs to be edited... later #}
+{# {% from "_formhelpers.html" import render_field %} #}

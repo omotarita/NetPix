@@ -1,7 +1,10 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
+from h11 import Data
+from netpix_app import photos
 from wtforms import StringField, PasswordField, EmailField, BooleanField, FormField, validators
 from wtforms.validators import DataRequired, EqualTo, ValidationError
-from netpix_app.models import User
+from netpix_app.models import User, Account
 from werkzeug.security import check_password_hash, generate_password_hash
 import random, string
 
@@ -43,3 +46,15 @@ class LoginForm(FlaskForm):
             raise ValidationError('Incorrect password or username')
         elif User.check_password(user, password) == False:
             raise ValidationError('Incorrect password or username') ## this may not work...
+
+class UpdateAccountForm(FlaskForm):
+    first_name = StringField('First Name')
+    last_name = StringField('Last Name')
+    photo = FileField('Profile picture', validators=[FileAllowed(photos, 'Images only!')])
+    #new_friend = ''
+
+    '''
+    def request_friend(self, username, new_friend):
+        #if friend exists (their username is in database) and is not friends with self
+        pass
+    '''

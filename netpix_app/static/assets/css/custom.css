@@ -3,6 +3,36 @@
     src: url('assets/fonts/BebasNeue.ttf') format("opentype");
 }
 
+.nav-link {
+  color: rgba(255, 255, 255, 0.726) !important;
+  }
+
+.card {
+  box-shadow: 0 0px 20px 0 rgba(0,0,0,0.2);
+  background-color: rgb(123, 0, 0);
+  transition: 0.3s;
+}
+
+.card-header {
+  padding-left: 0px;
+  padding-right: 0px;
+  box-shadow: 0 0px 20px 0 rgba(0,0,0,0.2);
+  background-color: rgb(64, 1, 1);
+  transition: 0.3s;
+}
+
+.btn-primary {
+  background-color: rgb(25, 1, 1);
+  border-color: rgb(25, 1, 1);
+  transition: 0.3s;
+}
+
+.card-body {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+
 
 /*h1 {
 margin: 10%;

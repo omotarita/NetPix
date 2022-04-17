@@ -1,0 +1,38 @@
+<div class="d-flex justify-content-center">
+    <div class="card text-center">
+        <div class="card-header">
+          My Account
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <img class="card-img-top" src="{{ url }}" alt="User profile photo">
+                </div>    
+                <div class="col-sm-6">
+                    {% if first_name in template_context %}
+                        <h5 class="card-title">Hi {{ result.first_name }}</h5>
+                    {% else %}
+                        <h5 class="card-title">Hi {{ username }}</h5>
+                    {% endif %}
+                    {if (first_name in template_context) and (last_name in template_context)}
+                        <p class="card-text">{{ username }} • {{ first_name }}{{ last_name }} • {{ email }}</p>
+                    {% else %}
+                        <p class="card-text">{{ email }} • {{ username }}</p>
+                    {% endif %}
+                <a href="#" class="btn btn-primary">Find a movie</a>
+                </div>         
+          </div>
+        </div>
+    </div>
+    <div class="card">
+        <img class="card-img-top" src="{{ url }}" alt="User profile photo">
+        <div class="card-body">
+            {% if current_user.is_anonymous %}
+            {% else %}
+            {% endif %}
+            <h5 class="card-title">{{ result.first_name }}</h5>
+            <h6>{{ result.last_name }}</h6>
+            <p class="card-text">{{ result.bio }}</p>
+        </div>
+    </div>
+</div>

@@ -7,11 +7,12 @@ from pathlib import Path
 import dash
 from dash import Dash
 import dash_bootstrap_components as dbc
-#import pandas as pd
+from flask_uploads import UploadSet, IMAGES, configure_uploads
 
 
 csrf = CSRFProtect()
 db = SQLAlchemy()
+photos = UploadSet('photos', IMAGES)
 login_manager = LoginManager()
 
 def create_app(config_class_name):
@@ -26,6 +27,7 @@ def create_app(config_class_name):
     csrf.init_app(app)
     csrf._exempt_views.add('dash.dash.dispatch')
     db.init_app(app)
+    configure_uploads(app, photos)
     #login_manager.init_app(app)
     #csrf.init_app(app)
     login_manager.login_view = 'auth.login'
@@ -55,7 +57,7 @@ def register_dashapp(app):
 
     dashapp = dash.Dash(__name__,
                          server=app,
-                         url_base_pathname='/dashboard/',
+                         url_base_pathname="/dashboard/",
                          assets_folder=get_root_path(__name__) + '/dashboard/assets/',
                          meta_tags=[meta_viewport],
                          external_stylesheets = ['assets/custom.css', dbc.themes.BOOTSTRAP]
@@ -66,10 +68,10 @@ def register_dashapp(app):
         dashapp.layout = layout.layout
         register_callbacks(dashapp)
 
-    _protect_dash_views(dashapp)
+    #_protect_dash_views(dashapp)
 
 
-def _protect_dash_views(dash_app):
+'''def _protect_dash_views(dash_app):
     for view_func in dash_app.server.view_functions:
         if view_func.startswith(dash_app.config.routes_pathname_prefix):
-            dash_app.server.view_functions[view_func] = login_required(dash_app.server.view_functions[view_func])
+            dash_app.server.view_functions[view_func] = login_required(dash_app.server.view_functions[view_func])'''
