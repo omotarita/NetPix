@@ -2,10 +2,13 @@
 {% set title = 'Profile Display' %}
 {% block content %}
 <div>
-    <input class="search-bar" type="text" placeholder="Find Friends" name="query">
-    <input type="submit" value="Search">
+    <form method="POST" action="{{ url_for('auth.find_friends') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input class="search-bar" type="text" placeholder="Find Friends" name="query">
+        <input type="submit" value="Search">
+    </form>
 </div>
-    {% if result == None %}
+    {% if results == [] %}
     <div>
         <h6>{{ message }}</h6>
     </div>
@@ -15,18 +18,22 @@
             <div class="d-flex justify-content-center">
                 <div class="card text-center" style="width: 35rem;">
                     <div class="card-header" style="width: 100%;">
-                    Sample
+                    Match!
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-sm-6">
-                                <img class="card-img-top" src="{{ url_for('static', filename=photo_url) }}" position="absolute" alt="User profile photo">
-                            </div>    
+                                {% if account_info['photo_url'] != None %}
+                                        <img class="card-img-top" src="{{ url_for('static', filename=account_info['photo_url']) }}" position="absolute" alt="User profile photo">
+                                {% else %}
+                                        <div style="width: 120; height:120; background-color: rgb(201, 161, 161); position: relative; top: 5px; left: 40px; text-align: center;">No profile photo</div>
+                                {% endif %}    
+                            </div>   
                             <div class="col-sm-6">
                                 {% if account_info['first_name'] != None %}
-                                    <h3 class="card-title">Hi {{ first_name }}</h3>
+                                    <h3 class="card-title">{{ account_info['first_name'] }}</h3>
                                 {% else %}
-                                    <h3 class="card-title">Hi @{{ account_info['username'] }}</h3>
+                                    <h3 class="card-title">@{{ account_info['username'] }}</h3>
                                 {% endif %}
                                 {% if (account_info['first_name'] != None) and (account_info['last_name'] != None) %}
                                     <p class="card-text">@{{ account_info['username'] }} • {{ account_info['first_name'] }} {{ account_info['last_name'] }} • {{ account_info['email'] }}</p>

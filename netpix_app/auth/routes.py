@@ -143,32 +143,45 @@ def example10():
 '''
 #here! 
 #want to add functionality to search and add friends
-@auth_bp.route('/users/find-friends', methods=['GET', 'POST'])
+@auth_bp.route('/users/find-friends', methods=['GET','POST'])
 @login_required
 def find_friends():
-    query = request.form['query']
-    matching_accounts = Account.query.filter(Account.username.contains(query)).all()
-    results = []
-    if matching_accounts == []:
-        message = "No matching users :("
-        results = None
+    print("Submit working")
+    #query = request.form['query']
+    query = request.form.get("query")
+    if (query == None) or (query == ""):
+        print(type(query))
+        print("Query is NoneType")
+        results = []
+        message = "Try searching a friend's username"
+        #matching_accounts = Account.query.filter(Account.username.contains(query)).all()
     else:
-        message = ""
-        for account in matching_accounts:
-            username = account.username
-            email = account.email
-            account_info = dict(username=username, email=email, first_name=None, last_name=None, photo_url=None)
-            if account.first_name != None:
-                first_name = account.first_name
-                account_info['first_name'] = first_name
-            if account.last_name != None:
-                last_name = account.last_name
-                account_info['last_name'] = last_name
-            if account.photo != None:
-                photo_url = 'assets/images/' + account.photo
-                account_info['photo_url'] = photo_url
-            results.append(account_info)
-    template_context = dict(results, message)
+        print("Query is not NoneType")
+        matching_accounts = Account.query.filter(Account.username.contains(query))
+        results = []
+        if matching_accounts == []:
+            message = "No matching users :("
+        else:
+            message = "No matching users :("
+            for account in matching_accounts:
+                username = account.username
+                email = account.email
+                account_info = dict(username=username, email=email, first_name=None, last_name=None, photo_url=None)
+                if account.first_name != None:
+                    first_name = account.first_name
+                    account_info['first_name'] = first_name
+                if account.last_name != None:
+                    last_name = account.last_name
+                    account_info['last_name'] = last_name
+                if account.photo != None:
+                    photo_url = 'assets/images/' + account.photo
+                    #print("Here's the photo url")
+                    #print(photo_url)
+                    #print("And here's the photo filename")
+                    #print(account.photo)
+                    account_info['photo_url'] = photo_url
+                results.append(account_info)
+    template_context = dict(results=results, message=message)
     return render_template('find_friends.html', **template_context)
 
 '''

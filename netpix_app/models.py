@@ -13,6 +13,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.Text, unique=True, nullable=False)
     password = db.Column(db.Text, nullable=False)
     account = db.relationship("Account", uselist=False, back_populates="user")
+    saved_preferences = db.relationship("Saved_Preferences", uselist=False, back_populates="user")
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -41,8 +42,15 @@ class Account(db.Model):
     #blends = db.relationship("Blends", back_populates="account")
     #watched_movies = db.relationship("Watched_Movies", back_populates="account")
 
-    def set_avatar():
-        pass
+class Saved_Preferences(db.Model):
+    '''Class representing users' saved preferences'''
+    __tablename__ = "saved_preferences"
+    id = db.Column(db.Integer, primary_key=True)
+    tag = db.Column(db.Text, nullable=False)
+    time_pref = db.Column(db.Integer, nullable=False)
+    genre_prefs = db.Column(db.Text, nullable=False) #we will convert from list to text to input into db then from text back to list to use
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship("User", back_populates="saved_preferences")
 
 """
 class Friendship(db.Model):
@@ -56,11 +64,6 @@ class Friendship(db.Model):
     account = db.relationship("Account", back_populates="saved_preferences")
 
 
-class Saved_Preferences(db.Model):
-    '''Class representing users' saved preferences'''
-    __tablename__ = "saved_preferences"
-    id = db.Column(db.Integer, primary_key=True)
-    account = db.relationship("Account", back_populates="saved_preferences")
 
 
 class Watched_Movies(db.Model):

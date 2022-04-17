@@ -7,9 +7,41 @@ import pandas as pd, plotly.graph_objs as go, dash_bootstrap_components as dbc
 
 DATA_PATH = Path(__file__).parent.joinpath('data')
 MOVIE_DATA_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'updated_complete_data.csv')
+SAVED_PREFS_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'saved_prefs.csv')
 
 def register_callbacks(dash_app):
     '''Function to register all the callbacks for my Dash app'''
+    @dash_app.callback(
+        [Output('preference-store', 'data')],
+        [Input('save-prefs', 'n_clicks')],
+        [State('runtime-slider', 'value'), State('genre-dropdown', 'value'), State('tag-input', 'value'), State('username-input', 'value')],
+    )
+    def save_preferences(n_clicks, time_pref, genre_prefs, tag_value, username_value):
+        """
+        On the click of the 'Save Preferences' button, takes input from user's preferences, and their given tag and username, 
+        and processes these and appends them to the csv file. 
+        Also stores preferences in preference-store 
+        """
+        #print("New Saved Pref check")
+        i = 0
+        genre_preference_string = ""
+        #print("gpref check")
+        while i < len(genre_prefs):
+            genre_preference_string = genre_preference_string + str(genre_prefs[i])  + "+"  
+            i = i + 1  
+        #print("While check")
+        wrap_new_saved_pref = []
+        wrap_new_saved_pref.append(username_value)
+        wrap_new_saved_pref.append(tag_value)
+        wrap_new_saved_pref.append(time_pref)
+        wrap_new_saved_pref.append(genre_prefs)
+        #print("Wrapping check")
+        df = pd.DataFrame(wrap_new_saved_pref)
+        df.to_csv(SAVED_PREFS_FILEPATH, mode='a', header=False)
+        print("DF/CSV check")
+        print(wrap_new_saved_pref)
+        return genre_preference_string
+
     @dash_app.callback(
         [Output('hidden-store', 'hidden'), Output('slider-output-container', 'children'), Output('bubble-chart', 'figure'), Output('movie-dropdown', 'options')],
         [Input('runtime-slider', 'value'), Input('genre-dropdown', 'value')]
@@ -90,7 +122,6 @@ def register_callbacks(dash_app):
         :type data: list, int
         :return: DataFrame
         '''
-
         df_movies = pd.read_csv(MOVIE_DATA_FILEPATH)
         genre_adherence = []
         hover_text = []

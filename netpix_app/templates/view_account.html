@@ -12,8 +12,12 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-sm-6">
-                    <img class="card-img-top" src="{{ url_for('static', filename=photo_url) }}" position="absolute" alt="User profile photo">
-                </div>    
+                    {% if photo_url != None %}
+                            <img class="card-img-top" src="{{ url_for('static', filename=photo_url) }}" position="absolute" alt="User profile photo">
+                    {% else %}
+                            <div style="width: 120; height:120; background-color: rgb(201, 161, 161); position: relative; top: 5px; left: 40px; text-align: center;">Add profile photo below</div>
+                    {% endif %}    
+                </div>
                 <div class="col-sm-6">
                     {% if first_name != None %}
                         <h3 class="card-title">Hi {{ first_name }}</h3>
@@ -34,7 +38,7 @@
 </br>
 <div class="d-flex justify-content-between">
 
-    <div class="p-2"><h4>Saved Prefs</h4></div>
+    <div class="p-2"><h4>Saved Preferences</h4></div>
     <div class="p-2">
         <h4>Update Account Details</h4>
         <form method="POST" action="{{ url_for('auth.view_account') }}" enctype="multipart/form-data">

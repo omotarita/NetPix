@@ -25,6 +25,13 @@ font-family: 'Bebas Neue';
 font-size: 2.5rem;
 }
 
+h6 {
+  margin: 10%;
+  overflow-x: hidden;
+  font-family: 'Bebas Neue';
+  font-size: 15px;
+}
+
 body {
 color: #FFFFFF
 }

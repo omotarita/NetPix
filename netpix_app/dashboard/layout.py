@@ -19,6 +19,7 @@ layout = html.Div(style={'background-color': '#141414'}, children=[
     dbc.Container([
 
             dcc.Store(id='hidden-store', storage_type='memory'),
+            dcc.Store(id='preference-store', storage_type='memory'),
             dbc.Row([
                 html.Div(style={'text-align': 'center'}, children=[
                     html.Br(),
@@ -52,6 +53,29 @@ layout = html.Div(style={'background-color': '#141414'}, children=[
                     ),
                 html.Div(id='slider-output-container')
                 ]),
+            html.Br(),
+            dbc.Row([
+                dbc.Col(width=6, children=[
+                    html.H5(children=["Reuse Saved Preferences?"], style={'color': '#FFFFFF', 'font-family': 'Helvetica Neue', 'font-size': '26px' , 'opacity': '0.7'}),
+                    dcc.Dropdown(),
+                ]),
+                dbc.Col(width=6, children=[
+                    html.H5(children=["Save Your Preferences?"], style={'color': '#FFFFFF', 'font-family': 'Helvetica Neue', 'font-size': '26px' , 'opacity': '0.7'}),
+                    dbc.Row([
+                        dbc.Col(width=4, children=[
+                            dcc.Input(id="tag-input", type="text", placeholder="Tag", style={'marginRight':'10px'}),
+                            dcc.Input(id="username-input", type="text", placeholder="Username"),
+                        ]),
+                        dbc.Col(width=2, children=[
+                            html.Button('Save', id='save-prefs'),
+                        ]),
+
+                    ]),
+                    dbc.Row([
+
+                    ]), 
+                ]),
+            ]),
             html.Br(),
             html.Br(),
             html.H3(children=["Here's a list of movies that match your preferences"]),
