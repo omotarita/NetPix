@@ -1,3 +1,4 @@
+from typing import Type
 import dash, math
 from dash import Dash, dcc, html, Input, Output, State
 from pathlib import Path
@@ -8,11 +9,13 @@ import pandas as pd, plotly.graph_objs as go, dash_bootstrap_components as dbc
 DATA_PATH = Path(__file__).parent.joinpath('data')
 MOVIE_DATA_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'updated_complete_data.csv')
 SAVED_PREFS_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'saved_prefs.csv')
+MY_SAVED_PREFS_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'my_saved_prefs.csv')
+
 
 def register_callbacks(dash_app):
     '''Function to register all the callbacks for my Dash app'''
     @dash_app.callback(
-        [Output('preference-store', 'data')],
+        [Output('preference-store', 'data'), Output('save-success-output-container', 'children')],
         [Input('save-prefs', 'n_clicks')],
         [State('runtime-slider', 'value'), State('genre-dropdown', 'value'), State('tag-input', 'value'), State('username-input', 'value')],
     )
@@ -22,31 +25,28 @@ def register_callbacks(dash_app):
         and processes these and appends them to the csv file. 
         Also stores preferences in preference-store 
         """
-        #print("New Saved Pref check")
+        
         i = 0
         genre_preference_string = ""
-        #print("gpref check")
         while i < len(genre_prefs):
             genre_preference_string = genre_preference_string + str(genre_prefs[i])  + "+"  
             i = i + 1  
-        #print("While check")
         wrap_new_saved_pref = []
         wrap_new_saved_pref.append(username_value)
         wrap_new_saved_pref.append(tag_value)
         wrap_new_saved_pref.append(time_pref)
-        wrap_new_saved_pref.append(genre_prefs)
-        #print("Wrapping check")
-        df = pd.DataFrame(wrap_new_saved_pref)
+        wrap_new_saved_pref.append(genre_preference_string)
+        df = pd.DataFrame([wrap_new_saved_pref])
         df.to_csv(SAVED_PREFS_FILEPATH, mode='a', header=False)
-        print("DF/CSV check")
-        print(wrap_new_saved_pref)
-        return genre_preference_string
+        success_message = f"Saved {tag_value}. Press 'Refresh Page' above to update your saved preferences"
+        return genre_preference_string, success_message
+
 
     @dash_app.callback(
-        [Output('hidden-store', 'hidden'), Output('slider-output-container', 'children'), Output('bubble-chart', 'figure'), Output('movie-dropdown', 'options')],
-        [Input('runtime-slider', 'value'), Input('genre-dropdown', 'value')]
+        [Output('hidden-store', 'hidden'), Output('slider-output-container', 'children'), Output('bubble-chart', 'figure'), Output('movie-dropdown', 'options'), Output('saved-pref-dropdown', 'options')],
+        [Input('runtime-slider', 'value'), Input('genre-dropdown', 'value'), Input('saved-pref-dropdown', 'value')]
     )
-    def update_user(time_value, genre_value):
+    def update_user(time_value, genre_value, tag_name):
         """
         Takes input from user's preferences and calls on the generate_dataset function to adapt the dataframe accordingly to show user's results.
         Also produces a string verifying to the user the amount of time they've chosen
@@ -55,7 +55,17 @@ def register_callbacks(dash_app):
         :type: int, list
         :return: DataFrame, str, fig, list
         """
-        genre_prefs_User = genre_value
+        df = pd.read_csv(MY_SAVED_PREFS_FILEPATH)
+        saved_preference_list = df['tag'].to_list()
+
+        if tag_name != None:
+            selected_preference = df.loc[df['tag'] == tag_name]
+            time_value = int(selected_preference['time-pref'])
+            time_value = int(time_value)
+            genre_prefs_User = str(selected_preference['genre-prefs'])
+            genre_prefs_User = genre_prefs_User.split("+")
+        else:
+            genre_prefs_User = genre_value
 
         hours = time_value//60
         minutes= time_value - (hours*60)
@@ -80,12 +90,11 @@ def register_callbacks(dash_app):
         bubble = results_bubble(df_User)
 
         movie_options = df_User['Title'].tolist()
-
         test_options = [{'label': i,'value': i} for i in df_User['Title'].tolist()]
 
         df_User = df_User.to_json()
 
-        return df_User, time, bubble, test_options
+        return df_User, time, bubble, test_options, saved_preference_list
 
     @dash_app.callback(
         [Output('polar-chart', 'figure'), Output('header', 'children'), Output('match', 'children'), Output('text', 'children'), Output('poster', 'src')],

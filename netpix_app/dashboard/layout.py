@@ -8,18 +8,23 @@ from cmath import nan
 #from flask import redirect
 
 external_stylesheets = [Path(__file__).parent.parent.joinpath('static/assets', 'custom.css'), dbc.themes.BOOTSTRAP]
+MY_SAVED_PREFS_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'my_saved_prefs.csv')
+
 #external_stylesheets = Path(__file__).parent.parent.parent.joinpath('netpix_app/static/assets/css', 'custom.css')
 #print("Here's the path")
 #print(external_stylesheets)
 #app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 genre_list = ['Action','Adventure','Animation','Comedy','Crime','Documentary','Drama','Family','Fantasy','History','Horror','Music','Mystery','Science-Fiction','Romance','Thriller','TV Movie','War','Western']
+df = pd.read_csv(MY_SAVED_PREFS_FILEPATH)
+saved_preference_list = df['tag'].to_list()
 
 layout = html.Div(style={'background-color': '#141414'}, children=[
     dbc.Container([
 
             dcc.Store(id='hidden-store', storage_type='memory'),
             dcc.Store(id='preference-store', storage_type='memory'),
+            dcc.Store(id='saved-pref-store', storage_type='memory'),
             dbc.Row([
                 html.Div(style={'text-align': 'center'}, children=[
                     html.Br(),
@@ -57,7 +62,12 @@ layout = html.Div(style={'background-color': '#141414'}, children=[
             dbc.Row([
                 dbc.Col(width=6, children=[
                     html.H5(children=["Reuse Saved Preferences?"], style={'color': '#FFFFFF', 'font-family': 'Helvetica Neue', 'font-size': '26px' , 'opacity': '0.7'}),
-                    dcc.Dropdown(),
+                    dcc.Dropdown(
+                        id='saved-pref-dropdown',
+                        options=[{'label': x, 'value': x} for x in saved_preference_list],
+                        placeholder='Select...',
+                        multi=False
+                    ),
                 ]),
                 dbc.Col(width=6, children=[
                     html.H5(children=["Save Your Preferences?"], style={'color': '#FFFFFF', 'font-family': 'Helvetica Neue', 'font-size': '26px' , 'opacity': '0.7'}),
@@ -68,6 +78,7 @@ layout = html.Div(style={'background-color': '#141414'}, children=[
                         ]),
                         dbc.Col(width=2, children=[
                             html.Button('Save', id='save-prefs'),
+                            html.Div(id='save-success-output-container')
                         ]),
 
                     ]),

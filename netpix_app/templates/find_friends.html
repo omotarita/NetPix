@@ -9,9 +9,9 @@
     </form>
 </div>
     {% if results == [] %}
-    <div>
-        <h6>{{ message }}</h6>
-    </div>
+        <div>
+            <h6>{{ message }}</h6>
+        </div>
     {% else %}
         {% for account_info in results %}
             </br>
@@ -24,9 +24,9 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 {% if account_info['photo_url'] != None %}
-                                        <img class="card-img-top" src="{{ url_for('static', filename=account_info['photo_url']) }}" position="absolute" alt="User profile photo">
+                                    <img class="card-img-top" src="{{ url_for('static', filename=account_info['photo_url']) }}" position="absolute" alt="User profile photo">
                                 {% else %}
-                                        <div style="width: 120; height:120; background-color: rgb(201, 161, 161); position: relative; top: 5px; left: 40px; text-align: center;">No profile photo</div>
+                                    <div style="width: 120; height:120; background-color: rgb(201, 161, 161); position: relative; top: 5px; left: 40px; text-align: center;">No profile photo</div>
                                 {% endif %}    
                             </div>   
                             <div class="col-sm-6">

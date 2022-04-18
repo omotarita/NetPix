@@ -4,17 +4,21 @@ from urllib.parse import urlparse, urljoin
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import insert, update, delete
 from netpix_app import db, login_manager, photos
-from netpix_app.models import User, Account
+from netpix_app.models import User, Account, Saved_Preferences
 from netpix_app.auth.forms import SignupForm, LoginForm, UpdateAccountForm
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from datetime import timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from pathlib import Path
 import config
 import os
+import pandas as pd
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 posts = Blueprint('posts', __name__, template_folder='templates')
+SAVED_PREFS_FILEPATH = Path(__file__).parent.parent.joinpath('data', 'saved_prefs.csv')
+
 
 @auth_bp.route('/')
 def index():
@@ -24,13 +28,13 @@ def index():
 def profile():
     return render_template('display_profile.html')'''
 
+
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
-        #print(user)
         try:
             db.session.add(user)
             db.session.commit()
@@ -101,7 +105,7 @@ def view_account(username=None): #provides functionality which shows account det
     username = current_user.username
     account = Account.query.filter_by(username=username).first()
     email = account.email
-    template_context = dict(username=username, email=email, first_name=None, last_name=None, photo_url=None)
+    template_context = dict(username=username, email=email, first_name=None, last_name=None, photo_url=None, saved_prefs=None)
     if account.first_name != None:
         first_name = account.first_name
         template_context['first_name'] = first_name
@@ -127,7 +131,38 @@ def view_account(username=None): #provides functionality which shows account det
         db.session.commit() # Saves whatever changes have been made
         #filename = secure_filename(account.photo.filename)
         #account.photo.save(os.path.join(auth_bp.instance_path, 'photos', filename))
-        return redirect(url_for('auth.view_account', form=form)) #should it return form results to be used in displaying user's profile?        
+        return redirect(url_for('auth.view_account', form=form)) #should it return form results to be used in displaying user's profile?
+    users_saved = Saved_Preferences.query.filter_by(user_id=current_user.id).all()
+    saved_prefs = []
+    if users_saved != None:
+        i = 0
+        while i<len(users_saved):
+            tag = users_saved[i].tag
+            time_pref = users_saved[i].time_pref
+            hours = time_pref//60
+            minutes= time_pref - (hours*60)
+            if hours == 0:
+                if minutes == 1:
+                    time = f"Max: {minutes} minute"
+                else:
+                    time = f"Max: {minutes} minutes"
+            elif hours == 1:
+                if minutes ==1:
+                    time = f"Max: {hours} hour and {minutes} minute"
+                else:
+                    time = f"Max: {hours} hour and {minutes} minutes"
+            else:
+                if minutes == 1:
+                    time = f"Max: {hours} hours and {minutes} minute"
+                else:
+                    time = f"Max: {hours} hours and {minutes} minutes"
+            genre_prefs = users_saved[i].genre_prefs
+            genre_prefs = genre_prefs.split("+")
+            user_id = users_saved[i].user_id
+            saved_info = dict(tag=tag, time_pref=time, genre_prefs=genre_prefs, user_id=user_id)
+            saved_prefs.append(saved_info)
+            i = i+1
+    template_context['saved_prefs'] = saved_prefs
     return render_template('view_account.html', form=form, **template_context) #profile should include settings and saved, therefore subsequent two functions may be redundant
 
 '''
@@ -146,17 +181,13 @@ def example10():
 @auth_bp.route('/users/find-friends', methods=['GET','POST'])
 @login_required
 def find_friends():
-    print("Submit working")
     #query = request.form['query']
     query = request.form.get("query")
     if (query == None) or (query == ""):
-        print(type(query))
-        print("Query is NoneType")
         results = []
         message = "Try searching a friend's username"
         #matching_accounts = Account.query.filter(Account.username.contains(query)).all()
     else:
-        print("Query is not NoneType")
         matching_accounts = Account.query.filter(Account.username.contains(query))
         results = []
         if matching_accounts == []:
@@ -175,10 +206,6 @@ def find_friends():
                     account_info['last_name'] = last_name
                 if account.photo != None:
                     photo_url = 'assets/images/' + account.photo
-                    #print("Here's the photo url")
-                    #print(photo_url)
-                    #print("And here's the photo filename")
-                    #print(account.photo)
                     account_info['photo_url'] = photo_url
                 results.append(account_info)
     template_context = dict(results=results, message=message)

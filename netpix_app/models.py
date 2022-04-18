@@ -52,19 +52,18 @@ class Saved_Preferences(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship("User", back_populates="saved_preferences")
 
-"""
 class Friendship(db.Model):
     '''Class representing users' friends'''
     __tablename__ = "friends"
     id = db.Column(db.Integer, primary_key=True)
-    user =
-    users_friend =
+    user = db.Column(db.Text, nullable=False)
+    users_friend = db.Column(db.Text, nullable=False)
     friend_id = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('account.user_id'), nullable=False)
-    account = db.relationship("Account", back_populates="saved_preferences")
+    account = db.relationship("Account", back_populates="friendship")
 
 
-
+"""
 
 class Watched_Movies(db.Model):
     '''Class representing users' watched movies'''

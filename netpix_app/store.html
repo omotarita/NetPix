@@ -32,3 +32,25 @@ def find_friends():
             results.append(account_info)
     template_context = dict(results, message)
     return render_template('find_friends.html', **template_context)
+
+
+'''
+@dash_app.callback(
+    Output('saved-pref-store', 'data'),
+    Input('saved-pref-dropdown', 'value')
+)
+def select_saved_preference(tag_name):
+    """
+    On selecting a saved preference from dropdown, update_user function is called and slider and genre-pref dropdown values are set...
+    thus generating a corresponding visualisation for users
+    """
+    print("Ok we starting")
+    df = pd.read_csv(MY_SAVED_PREFS_FILEPATH)
+    selected_preference = df.loc[df['tag'] == tag_name]
+    time_val = selected_preference['time-pref']
+    genre_val = selected_preference['genre-prefs']
+    genre_val = genre_val.split("+")
+
+    update_user(time_val, genre_val)
+    return selected_preference
+'''

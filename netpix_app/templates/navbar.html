@@ -1,7 +1,7 @@
 {# Adapted from code for a Bootstrap example navbar (Available from: https://getbootstrap.com/docs/5.0/components/navbar/) #}
 <nav class="navbar navbar-expand-lg " style="background-color: #141414; color: white">
     <div class="container-fluid">
-      {# <a class="navbar-brand" href="{{ url_for('index') }}"><img id="logo", width="150", src="{{ url_for('static', filename='assets/images/logo.png') }}"></a> #}
+      <a class="navbar-brand" href="{{ url_for('index') }}"><img id="logo", width="150", src="{{ url_for('static', filename='assets/images/logo.png') }}"></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -14,7 +14,10 @@
           {% else %}
             <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
             <a class="nav-link" href="{{ url_for('auth.view_account') }}">My Account</a>
-            <button type="button" class="btn btn-primary">Push Changes</button>
+            <form method="POST" action="{{ url_for('index') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <input type="submit" value="Refresh Page">
+            </form>
           {% endif %}
         </div>
       </div>

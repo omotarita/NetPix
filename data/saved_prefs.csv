@@ -1,1 +1,12 @@
-username,tag,time-pref,genre-prefs
+ind,username,tag,time-pref,genre-prefs
+0,omotarita,horror-night,230,Comedy+Horror+Mystery+Adventure+Documentary+
+0,john,family-night,230,Comedy+Action+Family+
+0,maria,niche,230,Fantasy+Animation+
+0,maria,sucker for romance,260,Documentary+Romance+Music+
+0,lulu,family movie night,205,Adventure+Animation+Family+
+0,lulu,date night,205,Horror+Mystery+Romance+
+0,lulu,horror,205,Horror+Mystery+Thriller+
+0,omotarita,2000s romcom marathon,355,Comedy+TV Movie+Romance+
+0,lulu,westerns 'n' war,275,TV Movie+War+Western+
+0,lulu,babysitting,175,Animation+Family+
+0,lulu,adventure time,115,Adventure+
