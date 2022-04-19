@@ -28,8 +28,6 @@ def create_app(config_class_name):
     csrf._exempt_views.add('dash.dash.dispatch')
     db.init_app(app)
     configure_uploads(app, photos)
-    #login_manager.init_app(app)
-    #csrf.init_app(app)
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
     register_dashapp(app)
@@ -37,11 +35,6 @@ def create_app(config_class_name):
     with app.app_context():
         from netpix_app.models import User
         db.create_all()
-
-    #with app.app_context():
-        # Import Dash app
-        # from dash_app.dash import init_dashboard
-        # app = init_dashboard(app)
 
     from netpix_app.auth.routes import auth_bp
     app.register_blueprint(auth_bp)
@@ -67,11 +60,3 @@ def register_dashapp(app):
         dashapp.title = 'Dashboard'
         dashapp.layout = layout.layout
         register_callbacks(dashapp)
-
-    #_protect_dash_views(dashapp)
-
-
-'''def _protect_dash_views(dash_app):
-    for view_func in dash_app.server.view_functions:
-        if view_func.startswith(dash_app.config.routes_pathname_prefix):
-            dash_app.server.view_functions[view_func] = login_required(dash_app.server.view_functions[view_func])'''

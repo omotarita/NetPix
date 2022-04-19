@@ -4,8 +4,6 @@ from dash import Dash, dcc, html, Input, Output, State
 from pathlib import Path
 import pandas as pd, plotly.graph_objs as go, dash_bootstrap_components as dbc
 
-#external_stylesheets = [Path(__file__).parent.parent.joinpath('static/assets', 'custom.css'), dbc.themes.BOOTSTRAP]
-
 DATA_PATH = Path(__file__).parent.joinpath('data')
 MOVIE_DATA_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'updated_complete_data.csv')
 SAVED_PREFS_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'saved_prefs.csv')

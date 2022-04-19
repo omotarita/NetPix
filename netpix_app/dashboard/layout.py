@@ -5,17 +5,11 @@ import pandas as pd, plotly.graph_objs as go, dash_bootstrap_components as dbc
 from pathlib import Path
 from dash import Dash, dcc, html, Input, Output, State
 from cmath import nan
-#from flask import redirect
 
 external_stylesheets = [Path(__file__).parent.parent.joinpath('static/assets', 'custom.css'), dbc.themes.BOOTSTRAP]
 MY_SAVED_PREFS_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'my_saved_prefs.csv')
 MY_BLENDS_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'my_blends.csv')
 
-
-#external_stylesheets = Path(__file__).parent.parent.parent.joinpath('netpix_app/static/assets/css', 'custom.css')
-#print("Here's the path")
-#print(external_stylesheets)
-#app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 genre_list = ['Action','Adventure','Animation','Comedy','Crime','Documentary','Drama','Family','Fantasy','History','Horror','Music','Mystery','Science-Fiction','Romance','Thriller','TV Movie','War','Western']
 df = pd.read_csv(MY_SAVED_PREFS_FILEPATH)

@@ -45,7 +45,7 @@ class LoginForm(FlaskForm):
         if User.query.filter_by(username=username.data).first() is None:
             raise ValidationError('Incorrect password or username')
         elif User.check_password(user, password) == False:
-            raise ValidationError('Incorrect password or username') ## this may not work...
+            raise ValidationError('Incorrect password or username')
 
 class UpdateAccountForm(FlaskForm):
     first_name = StringField('First Name')

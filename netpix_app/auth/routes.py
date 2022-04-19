@@ -22,7 +22,7 @@ SAVED_PREFS_FILEPATH = Path(__file__).parent.parent.joinpath('data', 'saved_pref
 
 @auth_bp.route('/')
 def index():
-    return "This is the authentication section of the web app"#render_template('auth_index.html', title="Home") #this should be the top half of the dashboard submitted for cw1
+    return "This is the authentication section of the web app"
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -55,7 +55,7 @@ def login():
             flash("Incorrect password or username")
             return redirect(url_for('auth.login'))
         else:
-            login_user(user, remember=form.remember.data, duration=timedelta(minutes=1)) #check if it only works if remember me is selected...
+            login_user(user, remember=form.remember.data, duration=timedelta(minutes=1))
             next = request.args.get('next')
             if not is_safe_url(next):
                 return abort(400)
@@ -99,13 +99,13 @@ def view_account(username=None):
         if 'photo' in request.files:
             if request.files['photo'].filename != '':  
                 filename = photos.save(request.files['photo'])
-        if form.first_name.data != '': # If it isn't empty on submit, update
+        if form.first_name.data != '':
             account.first_name = form.first_name.data
         if form.last_name.data != '':
             account.last_name = form.last_name.data
         if form.photo.data != None:
             account.photo = filename
-        db.session.commit() # Saves whatever changes have been made
+        db.session.commit()
         return redirect(url_for('auth.view_account', form=form))
     users_saved = Saved_Preferences.query.filter_by(user_id=current_user.id).all()
     saved_prefs = []

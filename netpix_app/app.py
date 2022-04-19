@@ -13,7 +13,7 @@ from datetime import timedelta
 import pandas as pd
 
 
-app = create_app(DevelopmentConfig) #change config once developed (? - check submission advice from Week 6)
+app = create_app(DevelopmentConfig)
 bp_main = Blueprint('main', __name__)
 SAVED_PREFS_FILEPATH = Path(__file__).parent.parent.joinpath('data', 'saved_prefs.csv')
 MY_SAVED_PREFS_FILEPATH = Path(__file__).parent.parent.joinpath('data', 'my_saved_prefs.csv')
