@@ -1,7 +1,3 @@
 ,tag,time-pref,genre-prefs,user-id
-0,family movie night,205,Adventure+Animation+Family+,4
-0,date night,205,Horror+Mystery+Romance+,4
-0,horror,205,Horror+Mystery+Thriller+,4
-0,westerns 'n' war,275,TV Movie+War+Western+,4
-0,babysitting,175,Animation+Family+,4
-0,adventure time,115,Adventure+,4
+0,horror-night,230,Comedy+Horror+Mystery+Adventure+Documentary+,1
+0,2000s romcom marathon,355,Comedy+TV Movie+Romance+,1

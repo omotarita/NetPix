@@ -9,6 +9,8 @@ from cmath import nan
 
 external_stylesheets = [Path(__file__).parent.parent.joinpath('static/assets', 'custom.css'), dbc.themes.BOOTSTRAP]
 MY_SAVED_PREFS_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'my_saved_prefs.csv')
+MY_BLENDS_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'my_blends.csv')
+
 
 #external_stylesheets = Path(__file__).parent.parent.parent.joinpath('netpix_app/static/assets/css', 'custom.css')
 #print("Here's the path")
@@ -17,7 +19,14 @@ MY_SAVED_PREFS_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', '
 
 genre_list = ['Action','Adventure','Animation','Comedy','Crime','Documentary','Drama','Family','Fantasy','History','Horror','Music','Mystery','Science-Fiction','Romance','Thriller','TV Movie','War','Western']
 df = pd.read_csv(MY_SAVED_PREFS_FILEPATH)
+df2 = pd.read_csv(MY_BLENDS_FILEPATH)
 saved_preference_list = df['tag'].to_list()
+blend_list = df2['tag'].to_list()
+i = 0
+while i<len(blend_list):
+    saved_preference_list.insert(len(saved_preference_list), blend_list[i])
+    i=i+1
+
 
 layout = html.Div(style={'background-color': '#141414'}, children=[
     dbc.Container([

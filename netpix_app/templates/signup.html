@@ -7,7 +7,6 @@
     {{ form.password.label }} {{ form.password() }} <br>
     {{ form.password_repeat.label }} {{ form.password_repeat() }} <br>
     {{ form.accept_tos.label }} {{ form.accept_tos() }} <br>
-    {# Display the form validation errors #}
     {% for field, errors in form.errors.items() %}
         <div class="alert alert-error">
             {{ form[field].label }}: {{ ', '.join(errors) }}

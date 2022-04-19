@@ -12,6 +12,7 @@
             <a class="nav-link" href="{{ url_for('auth.signup') }}">Create Account</a>
             <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
           {% else %}
+            <a class="nav-link" href="{{ url_for('auth.blend_friend') }}">Blend</a>
             <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
             <a class="nav-link" href="{{ url_for('auth.view_account') }}">My Account</a>
             <form method="POST" action="{{ url_for('index') }}">

@@ -1,4 +1,35 @@
 {% extends 'layout.html' %}
 {% block content %}
-
+<div>
+    <h1>Blend</h1>
+    <form method="POST" action="{{ url_for('auth.blend_friend') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <label for="friends">Choose a friend</label>
+        <select id="friends" name="my_friend">
+            <option value="" disabled selected hidden>Select a friend</option>
+            {% for friend_info in friends %}
+            <option value="{{ friend_info['friends_username'] }}">{{ friend_info['friends_username'] }}</option>
+            {% endfor %}
+          </select>
+        <input  name="submit_button" type="submit" value="Confirm">
+    </form>
+    <form method="POST" action="{{ url_for('auth.blend_friend') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <label for="friends">Choose your preferences</label>
+        <select id="friends" name="my_pref">
+            <option value="" disabled selected hidden>Choose your preference</option>
+            {% for tag in my_saved_prefs %}
+            <option value="{{ tag }}">{{ tag }}</option>
+            {% endfor %}
+          </select>
+        <label for="friends">Choose their preferences</label>
+        <select id="friends" name="friends_pref">
+            <option value="" disabled selected hidden>Choose their preference</option>
+            {% for tag in friends_saved_prefs %}
+            <option value="{{ tag }}">{{ tag }}</option>
+            {% endfor %}
+          </select>
+        <input  name="submit_button" type="submit" value="Blend">
+    </form>
+</div>
 {% endblock %}

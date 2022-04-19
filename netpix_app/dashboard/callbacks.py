@@ -10,6 +10,7 @@ DATA_PATH = Path(__file__).parent.joinpath('data')
 MOVIE_DATA_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'updated_complete_data.csv')
 SAVED_PREFS_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'saved_prefs.csv')
 MY_SAVED_PREFS_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'my_saved_prefs.csv')
+MY_BLENDS_FILEPATH = Path(__file__).parent.parent.parent.joinpath('data', 'my_blends.csv')
 
 
 def register_callbacks(dash_app):
@@ -56,14 +57,27 @@ def register_callbacks(dash_app):
         :return: DataFrame, str, fig, list
         """
         df = pd.read_csv(MY_SAVED_PREFS_FILEPATH)
+        df2 = pd.read_csv(MY_BLENDS_FILEPATH)
         saved_preference_list = df['tag'].to_list()
+        blend_list = df2['tag'].to_list()
+        i = 0
+        while i<len(blend_list):
+            saved_preference_list.insert(len(saved_preference_list), blend_list[i])
+            i=i+1
 
         if tag_name != None:
-            selected_preference = df.loc[df['tag'] == tag_name]
-            time_value = int(selected_preference['time-pref'])
-            time_value = int(time_value)
-            genre_prefs_User = str(selected_preference['genre-prefs'])
-            genre_prefs_User = genre_prefs_User.split("+")
+            if tag_name in df.values:
+                selected_preference = df.loc[df['tag'] == tag_name]
+                time_value = int(selected_preference['time-pref'])
+                time_value = int(time_value)
+                genre_prefs_User = str(selected_preference['genre-prefs'])
+                genre_prefs_User = genre_prefs_User.split("+")
+            else:
+                selected_preference = df2.loc[df2['tag'] == tag_name]
+                time_value = int(selected_preference['time-pref'])
+                time_value = int(time_value)
+                genre_prefs_User = str(selected_preference['genre-prefs'])
+                genre_prefs_User = genre_prefs_User.split("+")
         else:
             genre_prefs_User = genre_value
 
@@ -89,12 +103,11 @@ def register_callbacks(dash_app):
         df_User = generate_dataframe(genre_prefs_User, time_value)
         bubble = results_bubble(df_User)
 
-        movie_options = df_User['Title'].tolist()
-        test_options = [{'label': i,'value': i} for i in df_User['Title'].tolist()]
+        movie_options = [{'label': i,'value': i} for i in df_User['Title'].tolist()]
 
         df_User = df_User.to_json()
 
-        return df_User, time, bubble, test_options, saved_preference_list
+        return df_User, time, bubble, movie_options, saved_preference_list
 
     @dash_app.callback(
         [Output('polar-chart', 'figure'), Output('header', 'children'), Output('match', 'children'), Output('text', 'children'), Output('poster', 'src')],

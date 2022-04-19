@@ -13,7 +13,11 @@
             <h6>{{ message }}</h6>
         </div>
     {% else %}
+    {% set button_val = "Add Friend" %}
         {% for account_info in results %}
+            {% if account_info['not_friend'] == False %}
+                {% set button_val = "Your Friend" %}
+            {% endif %}
             <form method="POST" action="{{ url_for('auth.find_friends') }}">
                 <input type="hidden" id="hidden_friend_variable" name="new_friend" value="{{ account_info['username'] }}">
                 </br>
@@ -43,7 +47,7 @@
                                         <p class="card-text">{{ account_info['email'] }} • @{{ account_info['username'] }}</p>
                                     {% endif %}
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                    <input class="btn btn-primary" name="submit_button" type="submit" value="Add Friend">
+                                    <input class="btn btn-primary" name="submit_button" type="submit" value="{{ button_val }}">
                                 </div>       
                             </div>
                         </div>

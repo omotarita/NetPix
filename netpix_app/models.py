@@ -14,6 +14,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.Text, nullable=False)
     account = db.relationship("Account", uselist=False, back_populates="user")
     saved_preferences = db.relationship("Saved_Preferences", uselist=False, back_populates="user")
+    blend = db.relationship("Blend", back_populates="user")
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -63,6 +64,18 @@ class Friendship(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('account.user_id'), nullable=False)
     account = db.relationship("Account", back_populates="friendship")
 
+class Blend(db.Model): #two users can have the same blend
+    '''Class representing all users' blends within the database''' #tbc
+    __tablename__ = "blend_"
+    id = db.Column(db.Integer, primary_key=True)
+    tag = db.Column(db.Text, nullable=False)
+    time_pref = db.Column(db.Integer, nullable=False)
+    genre_prefs = db.Column(db.Text, nullable=False)
+    primary_user = db.Column(db.Text, nullable=False)
+    secondary_user = db.Column(db.Text, nullable=False)
+    primary_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    secondary_user_id = db.Column(db.Integer, nullable=False)
+    user = db.relationship("User", back_populates="blend")
 
 """
 
@@ -73,10 +86,6 @@ class Watched_Movies(db.Model):
     account = db.relationship("Account", back_populates="saved_preferences")
 
 
-class Blends(db.Model): #many users can have the same blend
-    '''Class representing all users' blends within the database''' #tbc
-    __tablename__ = "blends"
-    id = db.Column(db.Integer, primary_key=True)
-    account = db.relationship("Account", back_populates="saved_preferences")
+
 
 """

@@ -38,7 +38,7 @@
 </br>
 <div class="d-flex justify-content-between">
 
-    <div class="p-2">
+    <div class="p-2" style="width: 50%">
         <h4>Saved Preferences</h4>
         {% if saved_prefs == [] %}
             <div>
@@ -71,7 +71,7 @@
             {% endfor %}
         {% endif %}
     </div>
-    <div class="p-2">
+    <div class="p-2" style="width: 50%">
         <h4>Update Account Details</h4>
         <form method="POST" action="{{ url_for('auth.view_account') }}" enctype="multipart/form-data">
             {{ form.csrf_token }}
@@ -90,7 +90,39 @@
 </div>
 </br>
 <div class="d-flex justify-content-between">
-    <div class="p-2"><h4>Blends</h4></div>
+    <div class="p-2">
+        <h4>Blends</h4>
+        {% if my_blends == [] %}
+            <div>
+                <h6>You don't have any blends</h6>
+            </div>
+        {% else %}
+            {% for blend_info in my_blends %}
+                </br>
+                <div class="center">
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <p class="tag-name" style="font-size:1.3rem">{{ blend_info['tag'] }}</p>
+                        </div>
+                        <div class="col-sm-10">
+                            <div class="flex-container">
+                                <div class="row">
+                                    {% for i in blend_info['genre_prefs'] %}
+                                        <div class="col-sm-3">
+                                            <div class="center" style="width:80px; background-color: red; text-align: center; border-radius:5%">{{ i }}</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="row">
+                                    <div>{{ blend_info['time_pref'] }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            {% endfor %}
+        {% endif %}
+    </div>
     <div class="p-2">
         <h4>Friends</h4>
         <a href="{{ url_for('auth.find_friends') }}" class="btn btn-primary">Add Friends</a>
@@ -101,12 +133,12 @@
         {% else %}
             {% for friend_info in friends %}
                 <form method="POST" action="{{ url_for('auth.blend_friend') }}">
-                    <input type="hidden" id="hidden_friend_variable" name="new_friend" value="{{ account_info['username'] }}">
+                    <input type="hidden" id="hidden_friend_variable" name="new_friend" value="{{ friend_info['friends_username'] }}">
                     </br>
-                    <div class="d-flex justify-content-center">
+                    <div class="d-flex justify-content-center" style="flex: 25em">
                         <div class="card text-center" style="width: 35rem;">
                             <div class="card-header" style="width: 100%;">
-                            Match!
+                            Your Friend
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -133,5 +165,3 @@
 </div>
 
 {% endblock %}
-
-{# {{ url_for('friends_search_results') }} #}
