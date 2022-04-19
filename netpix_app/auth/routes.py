@@ -116,7 +116,7 @@ def view_account(username=None):
             saved_info = dict(tag=gather_pref_info(users_saved, i)[0], time_pref=gather_pref_info(users_saved, i)[1], genre_prefs=gather_pref_info(users_saved, i)[2], user_id=user_id)
             saved_prefs.append(saved_info)
             i = i+1
-    users_blends = Blend.query.filter_by(primary_user_id=current_user.id).all()
+    users_blends = Blend.query.filter(or_(Blend.primary_user_id==current_user.id, Blend.secondary_user_id==current_user.id)).all()
     my_blends = []
     if users_blends != None:
         i = 0
@@ -125,11 +125,8 @@ def view_account(username=None):
             my_blends.append(blend_info)
             i = i+1
     template_context['my_blends'] = my_blends
-    print("Template context blends")
-    print(template_context['my_blends'])
     template_context['saved_prefs'] = saved_prefs
     template_context['friends'] = list_friends()
-    print(template_context)
     return render_template('view_account.html', form=form, **template_context)
 
 #here! 
