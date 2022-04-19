@@ -36,6 +36,7 @@ class Account(db.Model):
     last_name = db.Column(db.Text, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship("User", back_populates="account")
+    friendship = db.relationship("Friendship", uselist=False, back_populates="account")
     #friends = #list of results from querying Friendship and reading users_friend for each result where user=username. Anytime a new friend is added, we db.commit a new Friendship and we insert friend's username into this list 
     #saved_preferences = db.relationship("Saved_Preferences", back_populates="account")
     #friends = db.relationship("Friends", back_populates="account")

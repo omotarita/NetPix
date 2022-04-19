@@ -4,7 +4,7 @@ from urllib.parse import urlparse, urljoin
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import insert, update, delete
 from netpix_app import db, login_manager, photos
-from netpix_app.models import User, Account, Saved_Preferences
+from netpix_app.models import User, Account, Saved_Preferences, Friendship
 from netpix_app.auth.forms import SignupForm, LoginForm, UpdateAccountForm
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from datetime import timedelta
@@ -23,11 +23,6 @@ SAVED_PREFS_FILEPATH = Path(__file__).parent.parent.joinpath('data', 'saved_pref
 @auth_bp.route('/')
 def index():
     return "This is the authentication section of the web app"#render_template('auth_index.html', title="Home") #this should be the top half of the dashboard submitted for cw1
-
-'''@auth_bp.route('/users/<username>')
-def profile():
-    return render_template('display_profile.html')'''
-
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -82,21 +77,6 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-'''
-@auth_bp.route('/movie/choose/<sessionID>') #possibly remove... irrelevant ?
-def example02():
-    return render_template('login.html')  
-
-@auth_bp.route('/movie/<movieID>')
-def example04():
-    return render_template('display_listing.html') #this should be the bottom half of the dashboard submitted for cw1
-
-@auth_bp.route('/movie/results/<sessionID>')
-def example03():
-    return render_template('display_results.html') #this should be the top half of the dashboard submitted for cw1 (the bubble chart + a list)
-'''
-
-
 @auth_bp.route('/users/account', methods=['GET', 'POST'])
 @auth_bp.route('/users/account/<username>', methods=['GET', 'POST'])
 @login_required #you have to be the user == <username> for this page to show 
@@ -105,7 +85,7 @@ def view_account(username=None): #provides functionality which shows account det
     username = current_user.username
     account = Account.query.filter_by(username=username).first()
     email = account.email
-    template_context = dict(username=username, email=email, first_name=None, last_name=None, photo_url=None, saved_prefs=None)
+    template_context = dict(username=username, email=email, first_name=None, last_name=None, photo_url=None, saved_prefs=None, friends=None)
     if account.first_name != None:
         first_name = account.first_name
         template_context['first_name'] = first_name
@@ -162,7 +142,23 @@ def view_account(username=None): #provides functionality which shows account det
             saved_info = dict(tag=tag, time_pref=time, genre_prefs=genre_prefs, user_id=user_id)
             saved_prefs.append(saved_info)
             i = i+1
+    friendships_list = Friendship.query.filter_by(user=current_user).all()
+    friendships_list.append(Friendship.query.filter_by(users_friend=current_user).all())
+    all_friends_info = []
+    if friendships_list != None:
+        i = 0
+        while i<len(friendships_list):
+            if friendships_list[i].user == current_user.username:
+                friend_name = friendships_list[i].users_friend
+            if friendships_list[i].users_friend == current_user.username:
+                friend_name = friendships_list[i].user
+            friend_account = Account.query.filter_by(username=friend_name).first()
+            friend_photo_url = 'assets/images/' + friend_account.photo
+            friend_info = dict(friends_username=friend_name, friends_photo=friend_photo_url)
+            friend_info.append(all_friends_info)
+            i = i+1
     template_context['saved_prefs'] = saved_prefs
+    template_context['friends'] = all_friends_info
     return render_template('view_account.html', form=form, **template_context) #profile should include settings and saved, therefore subsequent two functions may be redundant
 
 '''
@@ -182,46 +178,62 @@ def example10():
 @login_required
 def find_friends():
     #query = request.form['query']
-    query = request.form.get("query")
-    if (query == None) or (query == ""):
-        results = []
-        message = "Try searching a friend's username"
-        #matching_accounts = Account.query.filter(Account.username.contains(query)).all()
-    else:
-        matching_accounts = Account.query.filter(Account.username.contains(query))
-        results = []
-        if matching_accounts == []:
-            message = "No matching users :("
-        else:
-            message = "No matching users :("
-            for account in matching_accounts:
-                username = account.username
-                email = account.email
-                account_info = dict(username=username, email=email, first_name=None, last_name=None, photo_url=None)
-                if account.first_name != None:
-                    first_name = account.first_name
-                    account_info['first_name'] = first_name
-                if account.last_name != None:
-                    last_name = account.last_name
-                    account_info['last_name'] = last_name
-                if account.photo != None:
-                    photo_url = 'assets/images/' + account.photo
-                    account_info['photo_url'] = photo_url
-                results.append(account_info)
-    template_context = dict(results=results, message=message)
+    template_context = dict(results=[], message="")
+    if request.method == 'POST':
+        if request.form["submit_button"] == 'Search':
+            query = request.form.get("query")
+            if (query == None) or (query == ""):
+                results = []
+                message = "Try searching a friend's username"
+                #matching_accounts = Account.query.filter(Account.username.contains(query)).all()
+            else:
+                matching_accounts = Account.query.filter(Account.username.contains(query))
+                results = []
+                if matching_accounts == []:
+                    message = "No matching users :("
+                else:
+                    message = "No matching users :("
+                    for account in matching_accounts:
+                        if account.username != current_user.username:
+                            username = account.username
+                            email = account.email
+                            account_info = dict(username=username, email=email, first_name=None, last_name=None, photo_url=None)
+                            if account.first_name != None:
+                                first_name = account.first_name
+                                account_info['first_name'] = first_name
+                            if account.last_name != None:
+                                last_name = account.last_name
+                                account_info['last_name'] = last_name
+                            if account.photo != None:
+                                photo_url = 'assets/images/' + account.photo
+                                account_info['photo_url'] = photo_url
+                            results.append(account_info)
+                        else:
+                            message = "It's just you!"
+            template_context = dict(results=results, message=message)
+        if request.form["submit_button"] == 'Add Friend':
+            friends = False
+            new_friend = request.form.get("new_friend")
+            friend_user = User.query.filter_by(username=new_friend).first()
+            if Friendship.query.filter_by(user=current_user, users_friend=friend_user).all() != None:
+                friends = True
+            if Friendship.query.filter_by(user=friend_user, users_friend=current_user).all() != None:
+                friends = True
+            if friends == False:
+                friendship = Friendship(user=current_user.username, users_friend=new_friend, friend_id=friend_user.id, user_id=current_user.id)
+                db.session.add(friendship)
+                db.session.commit()
+                flash("Added new friend!")
+            else:
+                flash("You're already friends!")
     return render_template('find_friends.html', **template_context)
 
-'''
-@auth_bp.route('/users/<username>')
-@login_required
-def example25():
-    return render_template('display_profile.html')
 
-@auth_bp.route('/users/blend/<blendID>')
+@auth_bp.route('/users/blend')
 @login_required
-def example05():
+def blend_friend():
+    pass
     return render_template('blend.html')
-'''
 
 @auth_bp.route('/404')
 def example12():

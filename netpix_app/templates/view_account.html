@@ -94,6 +94,41 @@
     <div class="p-2">
         <h4>Friends</h4>
         <a href="{{ url_for('auth.find_friends') }}" class="btn btn-primary">Add Friends</a>
+        {% if friends == [] %}
+            <div>
+                <h6>No friends :(</h6>
+            </div>
+        {% else %}
+            {% for friend_info in friends %}
+                <form method="POST" action="{{ url_for('auth.blend_friend') }}">
+                    <input type="hidden" id="hidden_friend_variable" name="new_friend" value="{{ account_info['username'] }}">
+                    </br>
+                    <div class="d-flex justify-content-center">
+                        <div class="card text-center" style="width: 35rem;">
+                            <div class="card-header" style="width: 100%;">
+                            Match!
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        {% if friend_info['friends_photo'] != None %}
+                                            <img class="card-img-top" src="{{ url_for('static', filename=friend_info['friends_photo']) }}" position="absolute" alt="User profile photo">
+                                        {% else %}
+                                            <div style="width: 120; height:120; background-color: rgb(201, 161, 161); position: relative; top: 5px; left: 40px; text-align: center;">No profile photo</div>
+                                        {% endif %}    
+                                    </div>   
+                                    <div class="col-sm-6">
+                                        <h3 class="card-title">@{{ friend_info['friends_username'] }}</h3>
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        <input class="btn btn-primary" name="submit_button" type="submit" value="Blend">
+                                    </div>       
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            {% endfor %}
+        {% endif %}
     </div>
 </div>
 
