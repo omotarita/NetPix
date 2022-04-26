@@ -3,7 +3,9 @@
 
 ### Repository URL
 [Coursework Repository](https://github.com/omotarita/comp0034-cw2)
+
 [Demo Video (Part 1)](https://www.loom.com/share/6322e572f6c545f08d079bd67ca7386f)
+
 [Demo Video (Part 2)](https://www.loom.com/share/d7252ae9db9c417c91ee24635ce40a6a)
 
 ### Set-Up Information
